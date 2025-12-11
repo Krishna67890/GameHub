@@ -1,8 +1,12 @@
 import React, { useState } from 'react'
+import { useTheme } from '../../components/context/ThemeContext'
+import './TicTacToeGame.css'
 
 const TicTacToeGame = () => {
-  const [board, setBoard] = useState(Array(9).fill(null))
-  const [xIsNext, setXIsNext] = useState(true)
+  const { theme } = useTheme()
+  const [board, setBoard] = useState<(string | null)[]>(Array(9).fill(null))
+  const [xIsNext, setXIsNext] = useState<boolean>(true)
+  const [scores, setScores] = useState<{x: number, o: number}>({ x: 0, o: 0 })
 
   const handleClick = (index: number) => {
     if (calculateWinner(board) || board[index]) {
@@ -20,7 +24,10 @@ const TicTacToeGame = () => {
 
   const renderSquare = (index: number) => {
     return (
-      <button className="square" onClick={() => handleClick(index)}>
+      <button 
+        className={`square ${theme}`} 
+        onClick={() => handleClick(index)}
+      >
         {board[index]}
       </button>
     )
@@ -31,34 +38,68 @@ const TicTacToeGame = () => {
     setXIsNext(true)
   }
 
+  const resetMatch = () => {
+    resetGame()
+    setScores({ x: 0, o: 0 })
+  }
+
+  // Check for winner and update scores
+  if (winner && (scores.x < 10 && scores.o < 10)) {
+    if (winner === 'X') {
+      setScores((prev: {x: number, o: number}) => ({ ...prev, x: prev.x + 1 }))
+    } else {
+      setScores((prev: {x: number, o: number}) => ({ ...prev, o: prev.o + 1 }))
+    }
+    
+    // Reset board for next round
+    setTimeout(() => {
+      setBoard(Array(9).fill(null))
+      setXIsNext(true)
+    }, 1000)
+  }
+
+  const matchWinner = scores.x >= 10 ? 'X' : scores.o >= 10 ? 'O' : null
+
   return (
-    <div className="game">
-      <div className="game-board">
-        <div className="board-row">
-          {renderSquare(0)}
-          {renderSquare(1)}
-          {renderSquare(2)}
+    <div className={`game ${theme}`}>
+      <h2>Tic Tac Toe</h2>
+      {matchWinner ? (
+        <div className="match-winner">
+          <h3>Match Winner: {matchWinner}</h3>
+          <p>Final Score - X: {scores.x}, O: {scores.o}</p>
+          <button onClick={resetMatch}>Play New Match</button>
         </div>
-        <div className="board-row">
-          {renderSquare(3)}
-          {renderSquare(4)}
-          {renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {renderSquare(6)}
-          {renderSquare(7)}
-          {renderSquare(8)}
-        </div>
-      </div>
-      <div className="game-info">
-        <div>{status}</div>
-        <button onClick={resetGame}>Reset Game</button>
-      </div>
+      ) : (
+        <>
+          <div className="score-board">
+            <p>Score - X: {scores.x}, O: {scores.o}</p>
+          </div>
+          <div className="board-row">
+            {renderSquare(0)}
+            {renderSquare(1)}
+            {renderSquare(2)}
+          </div>
+          <div className="board-row">
+            {renderSquare(3)}
+            {renderSquare(4)}
+            {renderSquare(5)}
+          </div>
+          <div className="board-row">
+            {renderSquare(6)}
+            {renderSquare(7)}
+            {renderSquare(8)}
+          </div>
+          <div className="game-info">
+            <p>{status}</p>
+            <button onClick={resetGame}>Reset Game</button>
+          </div>
+        </>
+      )}
     </div>
   )
 }
 
-function calculateWinner(squares: (string | null)[]) {
+function calculateWinner(squares: (string | null)[]): string | null {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],

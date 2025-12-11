@@ -1,0 +1,30 @@
+.main-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-layout.light {
+  background-color: #ffffff;
+  color: #333333;
+}
+
+.main-layout.dark {
+  background-color: #1a1a2e;
+  color: #eeeeee;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 10px;
+  }
+}

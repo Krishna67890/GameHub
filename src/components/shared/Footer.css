@@ -1,0 +1,19 @@
+.footer {
+  padding: var(--spacing-md);
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  margin-top: auto;
+}
+
+.footer.light {
+  background-color: var(--light-header);
+}
+
+.footer.dark {
+  background-color: var(--dark-header);
+}
+
+.footer-content p {
+  margin: 0;
+  font-size: 0.9rem;
+}
