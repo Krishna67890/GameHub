@@ -82,7 +82,7 @@ const CarromGame = () => {
                 pocketedCount++;
                 if (c.type === 'white') setScore(s => ({...s, player1: s.player1 + 10}));
                 if (c.type === 'black') setScore(s => ({...s, player2: s.player2 + 10}));
-                return {...c, status: 'pocketed'};
+                return {...c, status: 'pocketed' as const};
             }
             return c;
         });

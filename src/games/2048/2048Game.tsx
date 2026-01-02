@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import PS5GameWrapper from '../../components/PS5GameWrapper';
-import '../../styles/ps5-theme.css';
+import GameHubWrapper from '../../components/GameHubWrapper';
+import '../../styles/gamehub-theme.css';
 
 const Game2048 = () => {
   const [board, setBoard] = useState<number[][]>([]);
@@ -192,7 +192,7 @@ const Game2048 = () => {
   };
 
   return (
-    <PS5GameWrapper 
+    <GameHubWrapper 
       gameTitle="2048" 
       onBack={() => window.history.back()}
     >
@@ -203,7 +203,7 @@ const Game2048 = () => {
         gap: '20px'
       }}>
         {/* Game Info Panel */}
-        <div className="ps5-card" style={{ 
+        <div className="gamehub-card" style={{ 
           display: 'flex', 
           justifyContent: 'space-between', 
           alignItems: 'center',
@@ -211,8 +211,8 @@ const Game2048 = () => {
           maxWidth: '500px'
         }}>
           <div>
-            <h3 style={{ margin: '0 0 10px 0', color: 'var(--ps5-accent-blue)' }}>SCORE</h3>
-            <div className="ps5-score-value" style={{ 
+            <h3 style={{ margin: '0 0 10px 0', color: 'var(--gamehub-accent-blue)' }}>SCORE</h3>
+            <div className="gamehub-score-value" style={{ 
               fontSize: '2rem', 
               fontWeight: 'bold',
               color: 'white'
@@ -222,7 +222,7 @@ const Game2048 = () => {
           </div>
           
           <button 
-            className="ps5-button"
+            className="gamehub-button"
             onClick={initializeBoard}
             style={{ minWidth: '140px' }}
           >
@@ -232,7 +232,7 @@ const Game2048 = () => {
 
         {/* Win Message */}
         {gameWon && (
-          <div className="ps5-card ps5-pulse" style={{ 
+          <div className="gamehub-card gamehub-pulse" style={{ 
             background: 'linear-gradient(135deg, #00c853, #007e33)',
             textAlign: 'center',
             maxWidth: '400px'
@@ -240,7 +240,7 @@ const Game2048 = () => {
             <h2 style={{ margin: '0 0 15px 0' }}>🎉 You Win!</h2>
             <p style={{ margin: '0 0 15px 0' }}>Reached 2048! Incredible achievement!</p>
             <button 
-              className="ps5-button ps5-button--success"
+              className="gamehub-button gamehub-button--success"
               onClick={initializeBoard}
             >
               Continue Playing
@@ -250,7 +250,7 @@ const Game2048 = () => {
 
         {/* Game Over Message */}
         {gameOver && (
-          <div className="ps5-card" style={{ 
+          <div className="gamehub-card" style={{ 
             background: 'linear-gradient(135deg, #ff5252, #d32f2f)',
             textAlign: 'center',
             maxWidth: '400px'
@@ -258,7 +258,7 @@ const Game2048 = () => {
             <h2 style={{ margin: '0 0 15px 0' }}>💀 Game Over</h2>
             <p style={{ margin: '0 0 15px 0' }}>No more moves available!</p>
             <button 
-              className="ps5-button ps5-button--danger"
+              className="gamehub-button gamehub-button--danger"
               onClick={initializeBoard}
             >
               Try Again
@@ -267,7 +267,7 @@ const Game2048 = () => {
         )}
 
         {/* Game Board */}
-        <div className="ps5-game-board" style={{ 
+        <div className="gamehub-game-board" style={{ 
           display: 'inline-block',
           background: 'rgba(0, 0, 0, 0.4)'
         }}>
@@ -276,7 +276,7 @@ const Game2048 = () => {
               {row.map((cell, cellIndex) => (
                 <div
                   key={cellIndex}
-                  className="ps5-game-cell"
+                  className="gamehub-game-cell"
                   style={{
                     backgroundColor: getTileColor(cell),
                     color: getTileTextColor(cell),
@@ -292,7 +292,7 @@ const Game2048 = () => {
         </div>
 
         {/* Instructions */}
-        <div className="ps5-card" style={{ 
+        <div className="gamehub-card" style={{ 
           maxWidth: '500px',
           textAlign: 'center'
         }}>
@@ -301,7 +301,7 @@ const Game2048 = () => {
           <p>🎯 Reach 2048 to win the game</p>
         </div>
       </div>
-    </PS5GameWrapper>
+    </GameHubWrapper>
   );
 };
 
