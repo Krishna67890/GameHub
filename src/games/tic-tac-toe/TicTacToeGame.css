@@ -1,21 +1,29 @@
+/* PS5 Style Animations */
+@keyframes ps5-glow {
+  0% {
+    box-shadow: 0 0 5px rgba(78, 204, 163, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(78, 204, 163, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(78, 204, 163, 0.5);
+  }
+}
+
 .game {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin: 20px;
   padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   max-width: 500px;
   margin: 20px auto;
-}
-
-.game.light {
-  background-color: #f1f3f4;
-}
-
-.game.dark {
-  background-color: #0f3460;
+  background: rgba(36, 36, 58, 0.7);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .board-row {
@@ -27,23 +35,13 @@
   height: 60px;
   font-size: 24px;
   font-weight: bold;
-  border: 1px solid #999;
-  background: #fff;
+  border: 2px solid #4ecca3;
+  background: rgba(15, 15, 26, 0.7);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.square.light {
-  background: #fff;
-  color: #333;
-}
-
-.square.dark {
-  background: #1a1a2e;
-  color: #eee;
-  border-color: #4a4a8a;
+  transition: all var(--transition-fast);
 }
 
 .square:focus {
@@ -51,11 +49,31 @@
 }
 
 .square:hover {
-  background-color: #e6e6e6;
+  background: rgba(78, 204, 163, 0.2);
+  transform: scale(1.05);
 }
 
-.square.dark:hover {
-  background-color: #16213e;
+.score-board {
+  margin: 15px 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--ps5-light-text);
+  text-align: center;
+}
+
+.match-winner {
+  text-align: center;
+  padding: 20px;
+  background: rgba(78, 204, 163, 0.2);
+  border-radius: var(--radius-md);
+  margin: 20px 0;
+  animation: ps5-glow 2s infinite;
+}
+
+.match-winner h3 {
+  color: #ffd700;
+  font-size: 24px;
+  margin-bottom: 15px;
 }
 
 .game-info {
@@ -66,21 +84,26 @@
 .game-info p {
   font-size: 18px;
   margin-bottom: 10px;
+  color: var(--ps5-light-text);
 }
 
 .game-info button {
   margin-top: 10px;
   padding: 8px 16px;
   font-size: 16px;
-  background-color: #4CAF50;
+  background: linear-gradient(135deg, var(--ps5-accent-blue), var(--ps5-accent-purple));
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: all var(--transition-fast);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
 }
 
 .game-info button:hover {
-  background-color: #45a049;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 /* Responsive Design */
@@ -94,5 +117,9 @@
   .game {
     margin: 10px;
     padding: 15px;
+  }
+  
+  .match-winner h3 {
+    font-size: 20px;
   }
 }

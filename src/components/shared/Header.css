@@ -4,18 +4,13 @@
   position: sticky;
   top: 0;
   z-index: 100;
-}
-
-.header.light {
-  background-color: var(--light-header);
-}
-
-.header.dark {
-  background-color: var(--dark-header);
+  background: rgba(36, 36, 58, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .header-content {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
@@ -23,8 +18,15 @@
 }
 
 .header h1 {
-  color: var(--primary);
-  margin: 0;
+  color: var(--ps5-accent-blue);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 1.8rem;
+  background: linear-gradient(90deg, var(--ps5-accent-blue), var(--ps5-accent-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 nav ul {
@@ -38,13 +40,16 @@ nav li {
 
 nav a {
   text-decoration: none;
-  color: inherit;
+  color: var(--ps5-light-text);
   font-weight: 500;
-  transition: color 0.2s;
+  transition: all var(--transition-fast);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-sm);
 }
 
 nav a:hover {
-  color: var(--primary);
+  color: var(--ps5-accent-blue);
+  background: rgba(0, 122, 204, 0.1);
 }
 
 .header-actions {
@@ -60,11 +65,13 @@ nav a:hover {
   font-size: 1.2rem;
   padding: var(--spacing-sm);
   border-radius: 50%;
-  transition: background-color 0.2s;
+  transition: all var(--transition-fast);
+  color: var(--ps5-light-text);
 }
 
 .header-actions button:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
 }
 
 /* Responsive Design */

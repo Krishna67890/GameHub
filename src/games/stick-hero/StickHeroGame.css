@@ -1,0 +1,121 @@
+.stick-hero-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    background-color: #333;
+    overflow: hidden;
+}
+
+.stick-hero-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none; /* Prevent default touch actions like scrolling */
+}
+
+.stick-hero-ui {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.score-board, .level-board {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.3);
+    padding: 5px 10px;
+    border-radius: 8px;
+}
+
+.instructions-overlay {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 10px;
+    text-align: center;
+    pointer-events: none;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.instructions-overlay p {
+    margin: 5px 0;
+    font-size: 18px;
+}
+
+.game-over-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.game-over-overlay h2 {
+    font-size: 48px;
+    color: #FF5555;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px rgba(255, 85, 85, 0.5);
+}
+
+.game-over-overlay p {
+    font-size: 24px;
+    color: white;
+    margin-bottom: 30px;
+}
+
+.restart-btn {
+    padding: 15px 40px;
+    font-size: 20px;
+    font-weight: bold;
+    background: linear-gradient(135deg, #FF416C, #FF4B2B);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 5px 15px rgba(255, 75, 43, 0.4);
+}
+
+.restart-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(255, 75, 43, 0.6);
+}
+
+.restart-btn:active {
+    transform: scale(0.95);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -60%); }
+    to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+@media (max-width: 768px) {
+    .score-board, .level-board {
+        font-size: 20px;
+    }
+    
+    .instructions-overlay {
+        width: 80%;
+    }
+}

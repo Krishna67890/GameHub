@@ -1,36 +1,52 @@
 import React from 'react';
-import './GameMode.css';
+import '../styles/ps5-theme.css';
 
 const GameMode = () => {
-  const games = [
-    { id: 'tic-tac-toe', name: 'Tic Tac Toe', description: 'Classic X and O game' },
-    { id: 'snake', name: 'Snake', description: 'Classic snake game' },
-    { id: 'memory-card', name: 'Memory Card', description: 'Match pairs of cards' },
-    { id: 'flappy-bird', name: 'Flappy Bird', description: 'Navigate through pipes' },
-    { id: 'candy-crush', name: 'Candy Crush', description: 'Match candies to score' },
-    { id: 'sudoku', name: 'Sudoku', description: 'Number placement puzzle' },
-    { id: 'stick-hero', name: 'Stick Hero', description: 'Bridge building challenge' },
-    { id: 'maze', name: 'Maze', description: 'Find your way out' },
-    { id: 'kho-kho', name: 'Kho Kho', description: 'Tag team game' },
-    { id: 'cricket', name: 'Cricket', description: 'Bat and ball game' },
-    { id: 'wack-a-mole', name: 'Wack a Mole', description: 'Hit the moles' },
-    { id: 'wordle', name: 'Wordle', description: 'Guess the word' },
-  ];
-
   return (
-    <div className="game-mode-page">
-      <h1>Choose a Game</h1>
-      <div className="games-grid">
-        {games.map(game => (
-          <div 
-            key={game.id} 
-            className="game-card"
-            onClick={() => window.location.href = `/game/${game.id}`}
-          >
-            <h3>{game.name}</h3>
-            <p>{game.description}</p>
-          </div>
-        ))}
+    <div className="ps5-container">
+      <div className="ps5-header">
+        <h1 className="ps5-title">🎮 Game Modes</h1>
+        <p className="ps5-subtitle">Choose your preferred gaming experience</p>
+      </div>
+
+      <div className="ps5-game-grid">
+        <div className="ps5-game-card">
+          <span className="ps5-game-icon">🎯</span>
+          <div className="ps5-game-name">Single Player</div>
+          <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px', marginTop: '10px' }}>
+            Play against the computer
+          </p>
+        </div>
+
+        <div className="ps5-game-card">
+          <span className="ps5-game-icon">👥</span>
+          <div className="ps5-game-name">Multiplayer</div>
+          <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px', marginTop: '10px' }}>
+            Challenge friends online
+          </p>
+        </div>
+
+        <div className="ps5-game-card">
+          <span className="ps5-game-icon">⏱️</span>
+          <div className="ps5-game-name">Time Trial</div>
+          <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px', marginTop: '10px' }}>
+            Beat the clock
+          </p>
+        </div>
+
+        <div className="ps5-game-card">
+          <span className="ps5-game-icon">🏆</span>
+          <div className="ps5-game-name">Tournament</div>
+          <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px', marginTop: '10px' }}>
+            Compete in events
+          </p>
+        </div>
+      </div>
+
+      <div style={{ textAlign: "center", padding: "30px" }}>
+        <button className="ps5-button">
+          Start Playing
+        </button>
       </div>
     </div>
   );

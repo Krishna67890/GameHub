@@ -1,20 +1,13 @@
 import React from 'react';
-import { useTheme } from '../context/ThemeContext';
 import Header from '../shared/Header';
 import Footer from '../shared/Footer';
-import './MainLayout.css';
+import '../../styles/ps5-theme.css';
 
-interface MainLayoutProps {
-  children: React.ReactNode;
-}
-
-const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
-  const { theme } = useTheme();
-
+const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className={`main-layout ${theme}`}>
+    <div className="ps5-container">
       <Header />
-      <main className="main-content">
+      <main style={{ flex: 1, padding: '20px 0' }}>
         {children}
       </main>
       <Footer />

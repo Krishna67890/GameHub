@@ -1,0 +1,59 @@
+.kho-kho-game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    width: 100%;
+    height: 100%;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 5px;
+    background-color: #27ae60;
+    padding: 10px;
+    border-radius: 15px;
+    border: 4px solid #f1c40f;
+}
+
+.cell {
+    aspect-ratio: 1;
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 8px;
+    position: relative;
+}
+
+.player {
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+}
+
+.chaser { background-color: #e74c3c; }
+.runner { background-color: #2ecc71; }
+.defender { background-color: #3498db; }
+
+.power-up::after {
+    content: '⚡';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    font-size: 1.2rem;
+    color: #f1c40f;
+}
+
+.caught {
+    opacity: 0.5;
+    filter: grayscale(1);
+}

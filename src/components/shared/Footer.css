@@ -3,17 +3,13 @@
   text-align: center;
   box-shadow: var(--shadow-md);
   margin-top: auto;
-}
-
-.footer.light {
-  background-color: var(--light-header);
-}
-
-.footer.dark {
-  background-color: var(--dark-header);
+  background: rgba(36, 36, 58, 0.95);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .footer-content p {
   margin: 0;
   font-size: 0.9rem;
+  color: var(--ps5-muted-text);
 }

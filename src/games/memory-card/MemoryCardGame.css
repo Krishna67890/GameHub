@@ -3,18 +3,13 @@
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   max-width: 800px;
   margin: 20px auto;
-}
-
-.memory-card-game.light {
-  background-color: #f1f3f4;
-}
-
-.memory-card-game.dark {
-  background-color: #0f3460;
+  background: rgba(36, 36, 58, 0.7);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .game-board {
@@ -53,33 +48,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 24px;
   font-weight: bold;
 }
 
 .card-front {
-  background-color: #4CAF50;
+  background: linear-gradient(135deg, var(--ps5-accent-blue), var(--ps5-accent-purple));
   color: white;
-}
-
-.memory-card-game.dark .card-front {
-  background-color: #0f3460;
-  border: 2px solid #4a4a8a;
+  box-shadow: 0 0 10px rgba(0, 122, 204, 0.5);
 }
 
 .card-back {
-  background-color: #fff;
+  background: linear-gradient(135deg, #24243a, #1a1a2e);
   transform: rotateY(180deg);
-}
-
-.memory-card-game.dark .card-back {
-  background-color: #1a1a2e;
-  color: #eee;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
 .card.matched .card-front {
-  background-color: #FF9800;
+  background: linear-gradient(135deg, #ff9800, #ff5722);
+  box-shadow: 0 0 15px rgba(255, 152, 0, 0.7);
 }
 
 .game-info {
@@ -90,16 +79,18 @@
 .game-info p {
   font-size: 18px;
   margin: 10px 0;
+  color: var(--ps5-light-text);
 }
 
 .game-completed {
   margin: 20px 0;
+  text-align: center;
 }
 
 .game-completed p {
   font-size: 20px;
   font-weight: bold;
-  color: #4CAF50;
+  color: #4ecca3;
 }
 
 .controls {
@@ -110,16 +101,20 @@
 button {
   padding: 10px 20px;
   font-size: 16px;
-  background-color: #4CAF50;
+  background: linear-gradient(135deg, var(--ps5-accent-blue), var(--ps5-accent-purple));
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   margin: 5px;
+  transition: all var(--transition-fast);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
 }
 
 button:hover {
-  background-color: #45a049;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 /* Responsive Design */

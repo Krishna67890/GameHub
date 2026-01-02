@@ -55,7 +55,7 @@ const HangmanGame = () => {
       {'abcdefghijklmnopqrstuvwxyz'.split('').map(letter => (
         <button 
           key={letter} 
-          className={`letter ${guessedWord.includes(letter) || wrongGuesses > 0 ? 'disabled' : ''}`}
+          className={`letter ps5-button ${guessedWord.includes(letter) || wrongGuesses > 0 ? 'disabled' : ''}`}
           onClick={() => handleGuess(letter)} 
           disabled={guessedWord.includes(letter) || gameStatus !== 'playing'}
         >
@@ -65,10 +65,23 @@ const HangmanGame = () => {
     </div>
   );
 
+  const renderHangman = () => (
+      <div className="hangman-graphic">
+          <div className="gallows"></div>
+          {wrongGuesses > 0 && <div className="head"></div>}
+          {wrongGuesses > 1 && <div className="body"></div>}
+          {wrongGuesses > 2 && <div className="left-arm"></div>}
+          {wrongGuesses > 3 && <div className="right-arm"></div>}
+          {wrongGuesses > 4 && <div className="left-leg"></div>}
+          {wrongGuesses > 5 && <div className="right-leg"></div>}
+      </div>
+  );
+
   return (
     <PS5GameWrapper gameTitle="Hangman" onBack={() => window.history.back()}>
         <div className="hangman-container">
             <h2>Hangman</h2>
+            {renderHangman()}
             <div className="game-status">Wrong Guesses: {wrongGuesses} / {maxGuesses}</div>
             {renderWordDisplay()}
             

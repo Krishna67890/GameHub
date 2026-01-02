@@ -1,16 +1,20 @@
-.home-page {
-  padding: 20px;
-}
-
+/* Home Page */
 .hero-section {
   text-align: center;
   padding: var(--spacing-xl) 0;
+  background: rgba(36, 36, 58, 0.5);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-lg);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .hero-section h1 {
   font-size: 3rem;
   margin-bottom: var(--spacing-md);
-  color: var(--primary);
+  color: var(--ps5-accent-blue);
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
 .hero-section p {
@@ -19,21 +23,27 @@
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+  color: var(--ps5-muted-text);
 }
 
 .hero-section button {
-  background-color: var(--primary);
+  background: linear-gradient(90deg, var(--ps5-accent-blue), var(--ps5-accent-purple));
   color: white;
   border: none;
   padding: var(--spacing-md) var(--spacing-xl);
   font-size: 1.1rem;
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all var(--transition-normal);
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-md);
 }
 
 .hero-section button:hover {
-  background-color: #3da58a;
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
 }
 
 .features-section {
@@ -44,6 +54,9 @@
   text-align: center;
   margin-bottom: var(--spacing-lg);
   font-size: 2rem;
+  color: var(--ps5-accent-blue);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .features-grid {
@@ -56,33 +69,19 @@
   padding: var(--spacing-lg);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
-  transition: transform 0.2s;
-}
-
-.feature-card.light {
-  background-color: var(--light-card);
-}
-
-.feature-card.dark {
-  background-color: var(--dark-card);
+  transition: all var(--transition-normal);
+  background: rgba(36, 36, 58, 0.7);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .feature-card:hover {
   transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(0, 122, 204, 0.3);
 }
 
 .feature-card h3 {
   margin-bottom: var(--spacing-sm);
-  color: var(--primary);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .hero-section h1 {
-    font-size: 2rem;
-  }
-  
-  .features-grid {
-    grid-template-columns: 1fr;
-  }
+  color: var(--ps5-accent-blue);
 }
