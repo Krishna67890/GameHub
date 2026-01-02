@@ -79,4 +79,48 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## 📄 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-# GameHub
+
+## 🌐 Deployment
+
+### Handling Client-Side Routing
+
+This application uses client-side routing with React Router. When deploying to production, you need to configure your web server to redirect all routes to `index.html` to prevent 404 errors when accessing nested routes directly.
+
+### For Different Platforms:
+
+**Vercel:** Add a `vercel.json` file with:
+```json
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
+```
+
+**Netlify:** Add a `_redirects` file in the public directory with:
+```
+/*    /index.html   200
+```
+
+**Apache (.htaccess):**
+```
+Options -MultiViews
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.html [QSA,L]
+```
+
+**Nginx:**
+```
+location / {
+  try_files $uri $uri/ /index.html;
+}
+```
+
+### Development
+
+For development, the Vite configuration (`appType: 'spa'`) handles routing properly. Run `npm run dev` to start the development server.
+
+### Production Build
+
+To build for production, run `npm run build` and serve the `dist` folder using the server configuration that handles client-side routing.
