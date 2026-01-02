@@ -1,0 +1,74 @@
+.carrom-game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    width: 100%;
+    height: 100%;
+}
+
+#carrom-board {
+    width: 600px;
+    height: 600px;
+    background-color: #f7dE9A;
+    border-radius: 50%;
+    position: relative;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+    border: 20px solid #5D2906;
+}
+
+.center-circle {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background-color: #e74c3c;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid white;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+.pocket {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background-color: #111;
+    border-radius: 50%;
+    box-shadow: inset 0 0 10px #000;
+}
+
+#pocket1 { top: 0; left: 0; }
+#pocket2 { top: 0; right: 0; }
+#pocket3 { bottom: 0; left: 0; }
+#pocket4 { bottom: 0; right: 0; }
+
+.striker {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: radial-gradient(circle, #fff, #ddd);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    border: 2px solid #333;
+}
+
+.coin {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.white-coin { background-color: #f1f1f1; border: 1px solid #ccc; }
+.black-coin { background-color: #333; border: 1px solid #000; }
+.red-coin { 
+    background-color: #c0392b; 
+    border: 1px solid #a03021;
+    width: 32px;
+    height: 32px;
+}

@@ -1,0 +1,45 @@
+.bubble-shooter-container {
+    position: relative;
+    margin: 0 auto;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  #gameCanvas {
+    display: block;
+    margin: auto;
+    background: radial-gradient(circle, #555, #000);
+    box-shadow: 0 0 20px #000;
+    width: 100%;
+    height: 80vh;
+  }
+  #score {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 24px;
+    font-family: Arial, sans-serif;
+    z-index: 10;
+  }
+  #controls {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+  }
+  button {
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer;
+    background: #444;
+    color: white;
+    border: none;
+    border-radius: 5px;
+  }
+  button:hover {
+    background: #666;
+  }

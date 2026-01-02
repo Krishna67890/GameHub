@@ -11,11 +11,15 @@ A collection of games built with React, TypeScript, and Vite.
 5. **Candy Crush** - Match candies to score
 6. **Sudoku** - Number placement puzzle
 7. **Stick Hero** - Bridge building challenge
-8. **Maze** - Find your way out
-9. **Kho Kho** - Tag team game
-10. **Cricket** - Bat and ball game
-11. **Wack a Mole** - Hit the moles
-12. **Wordle** - Guess the word
+8. **Shape Breaker** - Tetris-style block puzzle
+9. **Archery** - Physics-based target shooting
+10. **Maze** - Find your way out
+11. **Kho Kho** - Tag team game
+12. **Cricket** - Bat and ball game
+13. **Wack a Mole** - Hit the moles
+14. **Wordle** - Guess the word
+15. **Rock Paper Scissors** - Classic hand game
+16. **2048** - Number merging puzzle
 
 ## 🚀 Getting Started
 

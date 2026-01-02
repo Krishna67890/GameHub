@@ -1,0 +1,29 @@
+.hangman-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.word-display {
+    font-size: 2rem;
+    letter-spacing: 10px;
+}
+
+.letters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    max-width: 500px;
+    justify-content: center;
+}
+
+.letter {
+    width: 40px;
+    height: 40px;
+}
+
+.game-result {
+    padding: 20px;
+    text-align: center;
+}

@@ -1,0 +1,43 @@
+.poll-container {
+    background-color: #fff;
+    padding: 30px;
+    margin: 50px auto;
+    width: 400px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+h1 {
+    font-size: 26px;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin: 15px 0;
+    font-size: 18px;
+    color: #333;
+    cursor: pointer;
+}
+
+input[type="radio"] {
+    margin-right: 10px;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.progress-bar {
+    margin-top: 20px;
+}
+
+.result {
+    margin-top: 30px;
+}
