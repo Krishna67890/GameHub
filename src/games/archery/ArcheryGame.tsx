@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaSync, FaArrowUp, FaBullseye, FaWind } from 'react-icons/fa';
-import './ArcheryGame.css';
+import PS5GameWrapper from '../../components/PS5GameWrapper';
+import '../../styles/ps5-theme.css';
 
 interface Target {
   x: number;
@@ -71,9 +72,19 @@ const ArcheryGame: React.FC = () => {
     }
     
     // Initial setup
-    if (containerRef.current) {
-      bowPosRef.current.y = containerRef.current.clientHeight / 2;
-    }
+    const setupGame = () => {
+      if (containerRef.current) {
+        bowPosRef.current.y = containerRef.current.clientHeight / 2;
+        // Set canvas dimensions
+        if (canvasRef.current) {
+          canvasRef.current.width = containerRef.current.clientWidth;
+          canvasRef.current.height = containerRef.current.clientHeight;
+        }
+      }
+    };
+    
+    // Use setTimeout to ensure DOM is ready
+    setTimeout(setupGame, 100);
     
     const handleResize = () => {
       if (canvasRef.current && containerRef.current) {
@@ -84,7 +95,9 @@ const ArcheryGame: React.FC = () => {
     };
     
     window.addEventListener('resize', handleResize);
-    handleResize();
+    
+    // Initial resize after DOM is ready
+    setTimeout(handleResize, 100);
     
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -557,132 +570,136 @@ const ArcheryGame: React.FC = () => {
   };
 
   return (
-    <div className="archery-game">
-      <div className="ag-header">
-        <h1 className="ag-title">Archery Master</h1>
-        <p className="ag-subtitle">Real Physics • Drag & Shoot</p>
-      </div>
-      
-      <div className="ag-score-panel">
-        <div className="ag-score-item">
-          <div className="ag-score-label">SCORE</div>
-          <div className="ag-score-value">{gameState.score}</div>
+    <PS5GameWrapper gameTitle="Archery Master" onBack={() => window.history.back()}>
+      <div className="archery-game" style={{ width: '100%', height: '100%' }}>
+        <div className="ag-header">
+          <h1 className="ag-title">Archery Master</h1>
+          <p className="ag-subtitle">Real Physics • Drag & Shoot</p>
         </div>
-        <div className="ag-score-item">
-          <div className="ag-score-label">BEST</div>
-          <div className="ag-score-value">{gameState.highScore}</div>
-        </div>
-        <div className="ag-score-item">
-          <div className="ag-score-label">ACCURACY</div>
-          <div className="ag-score-value">
-            {gameState.shotsFired > 0 ? Math.round((gameState.shotsHit / gameState.shotsFired) * 100) : 0}%
+        
+        <div className="ag-score-panel">
+          <div className="ag-score-item">
+            <div className="ag-score-label">SCORE</div>
+            <div className="ag-score-value">{gameState.score}</div>
+          </div>
+          <div className="ag-score-item">
+            <div className="ag-score-label">BEST</div>
+            <div className="ag-score-value">{gameState.highScore}</div>
+          </div>
+          <div className="ag-score-item">
+            <div className="ag-score-label">ACCURACY</div>
+            <div className="ag-score-value">
+              {gameState.shotsFired > 0 ? Math.round((gameState.shotsHit / gameState.shotsFired) * 100) : 0}%
+            </div>
+          </div>
+          <div className="ag-score-item">
+            <div className="ag-score-label">LEVEL</div>
+            <div className="ag-score-value">{gameState.level}</div>
           </div>
         </div>
-        <div className="ag-score-item">
-          <div className="ag-score-label">LEVEL</div>
-          <div className="ag-score-value">{gameState.level}</div>
-        </div>
-      </div>
-      
-      <div className="ag-game-container" ref={containerRef}>
-        <canvas ref={canvasRef} />
         
-        {/* Drag Handle UI */}
-        <div 
-          className="ag-drag-handle" 
-          ref={dragHandleRef}
-          onMouseDown={handleDragStart}
-          onTouchStart={handleDragStart}
-          style={{
-            left: gameState.isDragging ? gameState.dragCurrent.x - 20 : bowPosRef.current.x - 20,
-            top: gameState.isDragging ? gameState.dragCurrent.y - 20 : bowPosRef.current.y - 20,
-            cursor: gameState.isDragging ? 'grabbing' : 'grab'
-          }}
-        />
+        <div className="ag-game-container" ref={containerRef}>
+          <canvas ref={canvasRef} />
+          
+          {/* Drag Handle UI */}
+          <div 
+            className="ag-drag-handle" 
+            ref={dragHandleRef}
+            onMouseDown={handleDragStart}
+            onTouchStart={handleDragStart}
+            style={{
+              left: gameState.isDragging ? `${gameState.dragCurrent.x - 20}px` : `${bowPosRef.current.x - 20}px`,
+              top: gameState.isDragging ? `${gameState.dragCurrent.y - 20}px` : `${bowPosRef.current.y - 20}px`,
+              cursor: gameState.isDragging ? 'grabbing' : 'grab',
+              position: 'absolute',
+              pointerEvents: 'auto'
+            }}
+          />
 
-        {/* UI Overlay */}
-        <div className="ag-ui-overlay">
-          <div className="ag-stats-panel">
-            <div className="ag-stat">
-              <span>Arrows:</span>
-              <span className="ag-stat-value">{gameState.arrows}</span>
+          {/* UI Overlay */}
+          <div className="ag-ui-overlay">
+            <div className="ag-stats-panel">
+              <div className="ag-stat">
+                <span>Arrows:</span>
+                <span className="ag-stat-value">{gameState.arrows}</span>
+              </div>
+              <div className="ag-stat">
+                <span>Power:</span>
+                <span className="ag-stat-value">{gameState.bowPower.toFixed(1)}x</span>
+              </div>
+              <div className="ag-stat">
+                <span>Multiplier:</span>
+                <span className="ag-stat-value">{gameState.multiplier}x</span>
+              </div>
             </div>
-            <div className="ag-stat">
-              <span>Power:</span>
-              <span className="ag-stat-value">{gameState.bowPower.toFixed(1)}x</span>
+            
+            <div className="ag-controls">
+              <button className="ag-btn ps5-button" onClick={buyPower} disabled={gameState.score < 100}>
+                <FaBullseye /> Power (100)
+              </button>
+              <button className="ag-btn ps5-button" onClick={buyArrows} disabled={gameState.score < 50}>
+                <FaArrowUp /> Arrows (50)
+              </button>
+              <button className="ag-btn ps5-button" onClick={startGame}>
+                <FaSync /> Restart
+              </button>
             </div>
-            <div className="ag-stat">
-              <span>Multiplier:</span>
-              <span className="ag-stat-value">{gameState.multiplier}x</span>
-            </div>
+          </div>
+
+          {/* Indicators */}
+          <div className="ag-power-indicator">
+             <div 
+               className="ag-power-fill" 
+               style={{ 
+                 width: gameState.isDragging 
+                   ? `${Math.min(Math.sqrt(Math.pow(gameState.dragCurrent.x - bowPosRef.current.x, 2) + Math.pow(gameState.dragCurrent.y - bowPosRef.current.y, 2)), 100)}%` 
+                   : '0%' 
+               }} 
+             />
           </div>
           
-          <div className="ag-controls">
-            <button className="ag-btn" onClick={buyPower} disabled={gameState.score < 100}>
-              <FaBullseye /> Power (100)
-            </button>
-            <button className="ag-btn" onClick={buyArrows} disabled={gameState.score < 50}>
-              <FaArrowUp /> Arrows (50)
-            </button>
-            <button className="ag-btn" onClick={startGame}>
-              <FaSync /> Restart
-            </button>
+          <div className="ag-wind-indicator">
+            <span>Wind:</span>
+            <div className="ag-wind-arrow" style={{ transform: `rotate(${wind.angle}deg)` }} />
+            <span>{wind.speed}</span>
           </div>
-        </div>
 
-        {/* Indicators */}
-        <div className="ag-power-indicator">
-           <div 
-             className="ag-power-fill" 
-             style={{ 
-               width: gameState.isDragging 
-                 ? `${Math.min(Math.sqrt(Math.pow(gameState.dragCurrent.x - bowPosRef.current.x, 2) + Math.pow(gameState.dragCurrent.y - bowPosRef.current.y, 2)), 100)}%` 
-                 : '0%' 
-             }} 
-           />
-        </div>
-        
-        <div className="ag-wind-indicator">
-          <span>Wind:</span>
-          <div className="ag-wind-arrow" style={{ transform: `rotate(${wind.angle}deg)` }} />
-          <span>{wind.speed}</span>
-        </div>
+          {/* Overlays */}
+          {!gameState.isGameStarted && (
+            <div className="ag-modal">
+               <div className="ag-modal-content ps5-card">
+                 <h2>Ready Aim Fire!</h2>
+                 <p>Drag the handle to aim and shoot targets. Account for wind and gravity!</p>
+                 <button className="ag-btn ps5-button" style={{margin:'0 auto', fontSize:'1.2rem', padding:'10px 30px'}} onClick={startGame}>Start Game</button>
+               </div>
+            </div>
+          )}
 
-        {/* Overlays */}
-        {!gameState.isGameStarted && (
-          <div className="ag-modal">
-             <div className="ag-modal-content">
-               <h2>Ready Aim Fire!</h2>
-               <p>Drag the handle to aim and shoot targets. Account for wind and gravity!</p>
-               <button className="ag-btn" style={{margin:'0 auto', fontSize:'1.2rem', padding:'10px 30px'}} onClick={startGame}>Start Game</button>
-             </div>
+          {gameState.isGameOver && (
+            <div className="ag-modal">
+               <div className="ag-modal-content ps5-card">
+                 <h2>Out of Arrows!</h2>
+                 <p>Final Score: {gameState.score}</p>
+                 <p>Level Reached: {gameState.level}</p>
+                 <button className="ag-btn ps5-button" style={{margin:'0 auto'}} onClick={startGame}>Play Again</button>
+               </div>
+            </div>
+          )}
+
+          {showLevelUp && (
+            <div className="ag-level-up">
+              Level {gameState.level} Complete!<br/>
+              <span style={{fontSize:'0.7em', color:'#fff'}}>+{(gameState.level * 25)} Points</span>
+            </div>
+          )}
+
+          <div className={`ag-achievement ${achievement ? 'show' : ''}`}>
+             <div className="ag-achievement-title">{achievement?.title}</div>
+             <div className="ag-achievement-text">{achievement?.text}</div>
           </div>
-        )}
-
-        {gameState.isGameOver && (
-          <div className="ag-modal">
-             <div className="ag-modal-content">
-               <h2>Out of Arrows!</h2>
-               <p>Final Score: {gameState.score}</p>
-               <p>Level Reached: {gameState.level}</p>
-               <button className="ag-btn" style={{margin:'0 auto'}} onClick={startGame}>Play Again</button>
-             </div>
-          </div>
-        )}
-
-        {showLevelUp && (
-          <div className="ag-level-up">
-            Level {gameState.level} Complete!<br/>
-            <span style={{fontSize:'0.7em', color:'#fff'}}>+{(gameState.level * 25)} Points</span>
-          </div>
-        )}
-
-        <div className={`ag-achievement ${achievement ? 'show' : ''}`}>
-           <div className="ag-achievement-title">{achievement?.title}</div>
-           <div className="ag-achievement-text">{achievement?.text}</div>
         </div>
       </div>
-    </div>
+    </PS5GameWrapper>
   );
 };
 

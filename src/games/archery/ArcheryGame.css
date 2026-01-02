@@ -10,6 +10,14 @@
   overflow: hidden;
 }
 
+.archery-game > div {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .ag-header {
   text-align: center;
   padding: 15px;
@@ -79,6 +87,57 @@ canvas {
   display: block;
   width: 100%;
   height: 100%;
+}
+
+.ag-game-container {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(to bottom, #87CEEB, #1E90FF);
+  cursor: default;
+  min-height: 400px;
+  margin-top: 10px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .ag-title {
+    font-size: 1.8rem;
+  }
+  
+  .ag-subtitle {
+    font-size: 0.8rem;
+  }
+  
+  .ag-score-panel {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .ag-game-container {
+    max-width: 100%;
+    min-height: 300px;
+  }
+  
+  .ag-controls {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .ag-btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .ag-stat {
+    font-size: 0.8rem;
+  }
 }
 
 .ag-ui-overlay {

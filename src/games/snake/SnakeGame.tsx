@@ -16,12 +16,19 @@ const SnakeGame = () => {
   const gameLoopRef = useRef<number | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const gridSize = 20;
+  const baseGridSize = 20;
 
   const generateFood = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const actualGridSize = Math.min(canvas.width / 20, canvas.height / 20);
+    const gridWidth = Math.floor(canvas.width / actualGridSize);
+    const gridHeight = Math.floor(canvas.height / actualGridSize);
+    
     setFood({
-      x: Math.floor(Math.random() * (canvasRef.current?.width ?? 0) / gridSize),
-      y: Math.floor(Math.random() * (canvasRef.current?.height ?? 0) / gridSize)
+      x: Math.floor(Math.random() * gridWidth),
+      y: Math.floor(Math.random() * gridHeight)
     });
   }, []);
 
@@ -36,6 +43,18 @@ const SnakeGame = () => {
 
   useEffect(() => {
     if (gameStarted) {
+        // Initialize canvas dimensions before starting game
+        const canvas = canvasRef.current;
+        if (canvas) {
+          const container = canvas.parentElement;
+          if (container) {
+            const displayWidth = container.clientWidth;
+            const displayHeight = Math.min(400, window.innerHeight * 0.5);
+            
+            canvas.width = displayWidth;
+            canvas.height = displayHeight;
+          }
+        }
         resetGame();
     }
   }, [gameStarted]);
@@ -85,7 +104,14 @@ const SnakeGame = () => {
         case 'RIGHT': head.x += 1; break;
       }
 
-      if (head.x < 0 || head.x >= (canvasRef.current?.width ?? 0) / gridSize || head.y < 0 || head.y >= (canvasRef.current?.height ?? 0) / gridSize || newSnake.some(segment => segment.x === head.x && segment.y === head.y)) {
+      const canvas = canvasRef.current;
+      if (!canvas) return prevSnake;
+      
+      const actualGridSize = Math.min(canvas.width / 20, canvas.height / 20);
+      const gridWidth = Math.floor(canvas.width / actualGridSize);
+      const gridHeight = Math.floor(canvas.height / actualGridSize);
+      
+      if (head.x < 0 || head.x >= gridWidth || head.y < 0 || head.y >= gridHeight || newSnake.some(segment => segment.x === head.x && segment.y === head.y)) {
         setGameOver(true);
         return prevSnake;
       }
@@ -105,19 +131,75 @@ const SnakeGame = () => {
 
   useEffect(() => {
     if (gameStarted && !gameOver) {
-      gameLoopRef.current = window.setInterval(gameLoop, 150);
+      // Adjust game speed based on screen size
+      const canvas = canvasRef.current;
+      let speed = 150; // Default speed
+      
+      if (canvas) {
+        const actualGridSize = Math.min(canvas.width / 20, canvas.height / 20);
+        // Smaller grid = faster game, larger grid = slower game
+        speed = Math.max(80, Math.min(200, 200 - (actualGridSize * 3)));
+      }
+      
+      gameLoopRef.current = window.setInterval(gameLoop, speed);
       return () => {
         if (gameLoopRef.current) clearInterval(gameLoopRef.current);
       };
     }
   }, [gameStarted, gameOver, gameLoop]);
+  
+  // Handle window resize to update canvas dimensions
+  useEffect(() => {
+    const handleResize = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      
+      const container = canvas.parentElement;
+      if (container) {
+        const displayWidth = container.clientWidth;
+        const displayHeight = Math.min(400, window.innerHeight * 0.5);
+        
+        canvas.width = displayWidth;
+        canvas.height = displayHeight;
+      }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Initialize canvas size
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
-    const context = canvasRef.current?.getContext('2d');
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    // Set canvas dimensions based on container
+    const container = canvas.parentElement;
+    if (container) {
+      const displayWidth = container.clientWidth;
+      const displayHeight = Math.min(400, window.innerHeight * 0.5); // Max 400px or 50% of viewport
+      
+      canvas.width = displayWidth;
+      canvas.height = displayHeight;
+    } else {
+      // Fallback to default dimensions
+      canvas.width = 500;
+      canvas.height = 400;
+    }
+    
+    const context = canvas.getContext('2d');
     if (!context) return;
 
-    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+    context.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Calculate grid size based on canvas dimensions
+    const actualGridSize = Math.min(canvas.width / 20, canvas.height / 20); // Use minimum of 20 grid cells in each direction
+    const gridWidth = Math.floor(canvas.width / actualGridSize);
+    const gridHeight = Math.floor(canvas.height / actualGridSize);
+    
     const snakeImg = new Image();
     if (snakeImage) snakeImg.src = snakeImage;
 
@@ -126,19 +208,19 @@ const SnakeGame = () => {
 
     snake.forEach((segment, index) => {
         if (snakeImage && snakeImg.complete) {
-            context.drawImage(snakeImg, segment.x * gridSize, segment.y * gridSize, gridSize, gridSize);
+            context.drawImage(snakeImg, segment.x * actualGridSize, segment.y * actualGridSize, actualGridSize, actualGridSize);
         } else {
             context.fillStyle = index === 0 ? '#4CAF50' : '#81C784';
-            context.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize, gridSize);
+            context.fillRect(segment.x * actualGridSize, segment.y * actualGridSize, actualGridSize, actualGridSize);
         }
     });
 
     if (foodImage && foodImg.complete) {
-        context.drawImage(foodImg, food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+        context.drawImage(foodImg, food.x * actualGridSize, food.y * actualGridSize, actualGridSize, actualGridSize);
     } else {
         context.fillStyle = '#f44336';
         context.beginPath();
-        context.arc(food.x * gridSize + gridSize / 2, food.y * gridSize + gridSize / 2, gridSize / 2, 0, 2 * Math.PI);
+        context.arc(food.x * actualGridSize + actualGridSize / 2, food.y * actualGridSize + actualGridSize / 2, actualGridSize / 2, 0, 2 * Math.PI);
         context.fill();
     }
   }, [snake, food, snakeImage, foodImage]);
@@ -151,7 +233,7 @@ const SnakeGame = () => {
                 {!gameStarted && <button className="ps5-button" onClick={() => setGameStarted(true)}>Start Game</button>}
             </div>
 
-            <canvas ref={canvasRef} width="400" height="400" className="ps5-card" style={{ background: 'rgba(0,0,0,0.2)' }} />
+            <canvas ref={canvasRef} className="ps5-card" style={{ background: 'rgba(0,0,0,0.2)', width: '100%', maxWidth: '500px', height: '400px', display: 'block' }} />
 
             {gameOver && (
                 <div className="ps5-card" style={{ padding: '30px', textAlign: 'center', background: 'var(--ps5-gradient-danger)' }}>
