@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import GameHubWrapper from '../../components/GameHubWrapper';
-import '../../styles/gamehub-theme.css';
+import '../styles/gamehub-theme.css';
 
 const Game2048 = () => {
   const [board, setBoard] = useState<number[][]>([]);
