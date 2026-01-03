@@ -5,7 +5,6 @@ import '../styles/ps5-theme.css';
 
 const Login = () => {
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoginMode, setIsLoginMode] = useState(true); // true for login, false for register
   const { login, register } = useAuth();
@@ -15,13 +14,13 @@ const Login = () => {
     e.preventDefault();
     
     // Basic validation
-    if (!username.trim() || !password.trim()) {
-      setError('Please enter both username and password');
+    if (!username.trim()) {
+      setError('Please enter a username');
       return;
     }
     
     // Register the user
-    register(username.trim(), password.trim());
+    register(username.trim());
     
     // Navigate to home page after registration
     navigate('/');
@@ -31,19 +30,19 @@ const Login = () => {
     e.preventDefault();
     
     // Basic validation
-    if (!username.trim() || !password.trim()) {
-      setError('Please enter both username and password');
+    if (!username.trim()) {
+      setError('Please enter a username');
       return;
     }
     
     // Attempt to login
-    const loginSuccess = login(username.trim(), password.trim());
+    const loginSuccess = login(username.trim());
     
     if (loginSuccess) {
       // Navigate to home page after successful login
       navigate('/');
     } else {
-      setError('Invalid username or password');
+      setError('User not found');
     }
   };
   
@@ -72,7 +71,7 @@ const Login = () => {
       }}>
         <h2 style={{ color: 'var(--ps5-accent-blue)', marginBottom: '20px' }}>🎮 Demo Login</h2>
         <p style={{ color: 'white', marginBottom: '20px' }}>
-          Create your demo account with username and password
+          Create your demo account with username
         </p>
         
         {error && (
@@ -106,27 +105,7 @@ const Login = () => {
                 fontSize: '16px'
               }}
               placeholder="Enter your username"
-            />
-          </div>
-          
-          <div style={{ marginBottom: '15px', textAlign: 'left' }}>
-            <label style={{ display: 'block', color: 'white', marginBottom: '5px' }}>
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '12px',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid var(--ps5-accent-blue)',
-                borderRadius: '8px',
-                color: 'white',
-                fontSize: '16px'
-              }}
-              placeholder="Enter your password"
+              autoFocus
             />
           </div>
           
@@ -164,7 +143,7 @@ const Login = () => {
         </div>
         
         <div style={{ marginTop: '20px', color: '#ff6b6b', fontSize: '14px', textAlign: 'center' }}>
-          <p><strong>Disclaimer:</strong> This is a demo account. Do not use your personal password. This site only stores names and passwords locally in your browser. No need to add strong passwords - weak passwords are fine since this is just for demo purposes.</p>
+          <p><strong>Disclaimer:</strong> This is a demo account. This site only stores names locally in your browser. No password required.</p>
         </div>
       </div>
     </div>

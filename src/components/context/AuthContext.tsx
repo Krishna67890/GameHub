@@ -8,9 +8,9 @@ interface User {
 interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
-  login: (username: string, password: string) => boolean;
+  login: (username: string) => boolean;
   logout: () => void;
-  register: (username: string, password: string) => void;
+  register: (username: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,28 +27,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(userData);
       setIsAuthenticated(true);
     }
+    
+    // Clean up old password storage if it exists
+    localStorage.removeItem('demoPassword');
   }, []);
 
-  const register = (username: string, password: string) => {
+  const register = (username: string) => {
     const userData = {
       username,
       joinDate: new Date().toISOString(),
     };
     
-    // Store the password separately for login verification
     localStorage.setItem('demoUser', JSON.stringify(userData));
-    localStorage.setItem('demoPassword', password); // In a real app, this should be hashed
     setUser(userData);
     setIsAuthenticated(true);
   };
 
-  const login = (username: string, password: string): boolean => {
+  const login = (username: string): boolean => {
     const storedUser = localStorage.getItem('demoUser');
-    const storedPassword = localStorage.getItem('demoPassword');
     
-    if (storedUser && storedPassword) {
+    if (storedUser) {
       const userData = JSON.parse(storedUser);
-      if (userData.username === username && storedPassword === password) {
+      if (userData.username === username) {
         setUser(userData);
         setIsAuthenticated(true);
         return true;
@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
     setIsAuthenticated(false);
     // Optionally clear stored credentials
-    // localStorage.removeItem('demoPassword'); // Keep if we want to allow auto-login
+    localStorage.removeItem('demoPassword'); // Remove the stored password since we no longer use it
   };
 
   return (

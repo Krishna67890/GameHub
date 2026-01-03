@@ -7,8 +7,6 @@ const Settings = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [newUsername, setNewUsername] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
 
   const handleUpdateProfile = (e: React.FormEvent) => {
@@ -19,10 +17,7 @@ const Settings = () => {
       return;
     }
     
-    if (newPassword && newPassword !== confirmPassword) {
-      setMessage('Passwords do not match');
-      return;
-    }
+
     
     // Update user info in localStorage
     const updatedUser = {
@@ -32,16 +27,11 @@ const Settings = () => {
     
     localStorage.setItem('demoUser', JSON.stringify(updatedUser));
     
-    // Update password if provided
-    if (newPassword) {
-      localStorage.setItem('demoPassword', newPassword);
-    }
+
     
     // Update context state would require adding update function to auth context
     setMessage('Profile updated successfully!');
     setNewUsername('');
-    setNewPassword('');
-    setConfirmPassword('');
   };
 
   const handleDeleteAccount = () => {
@@ -91,50 +81,10 @@ const Settings = () => {
                 />
               </div>
 
-              <div style={{ marginBottom: '15px' }}>
-                <label style={{ display: 'block', color: 'var(--ps5-light-text)', marginBottom: '5px' }}>
-                  New Password (leave blank to keep current)
-                </label>
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                    border: '1px solid var(--ps5-accent-blue)',
-                    borderRadius: '8px',
-                    color: 'var(--ps5-light-text)',
-                    fontSize: '16px'
-                  }}
-                  placeholder="New password"
-                />
-              </div>
-
-              <div style={{ marginBottom: '15px' }}>
-                <label style={{ display: 'block', color: 'white', marginBottom: '5px' }}>
-                  Confirm New Password
-                </label>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                    border: '1px solid var(--ps5-accent-blue)',
-                    borderRadius: '8px',
-                    color: 'white',
-                    fontSize: '16px'
-                  }}
-                  placeholder="Confirm new password"
-                />
-              </div>
+          
 
               <button type="submit" className="ps5-button" style={{ width: '100%', marginBottom: '15px' }}>
-                Update Profile
+                Update Username
               </button>
             </form>
 
