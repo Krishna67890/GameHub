@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './CarromGame.css';
 import PS5GameWrapper from '../../components/PS5GameWrapper';
+import { useGame } from '../../components/context/GameContext';
+import { useAuth } from '../../components/context/AuthContext';
 
 interface Coin {
   id: number;
@@ -17,6 +19,9 @@ interface Vector2D {
 }
 
 const CarromGame = () => {
+  const { user } = useAuth();
+  const { updateGameProgress } = useGame();
+  
   const [score, setScore] = useState({ player1: 0, player2: 0 });
   const [playerTurn, setPlayerTurn] = useState(1); // 1 for Player 1 (White), 2 for Player 2 (Black)
   const [coins, setCoins] = useState<Coin[]>([]);
@@ -26,6 +31,43 @@ const CarromGame = () => {
   const [gameState, setGameState] = useState<'placing' | 'aiming' | 'striking' | 'moving'>('placing'); // placing -> aiming -> striking -> moving -> end_turn
   const [strikerVelocity, setStrikerVelocity] = useState<Vector2D>({ x: 0, y: 0 });
   const [power, setPower] = useState(0);
+  
+  // Refs to keep track of current values during physics simulation
+  const scoreRef = useRef(score);
+  const playerTurnRef = useRef(playerTurn);
+  const coinsRef = useRef(coins);
+  const strikerPositionRef = useRef(strikerPosition);
+  const strikerVelocityRef = useRef(strikerVelocity);
+  
+  // Update refs when state changes
+  useEffect(() => {
+    scoreRef.current = score;
+  }, [score]);
+  
+  useEffect(() => {
+    playerTurnRef.current = playerTurn;
+  }, [playerTurn]);
+  
+  useEffect(() => {
+    coinsRef.current = coins;
+  }, [coins]);
+  
+  useEffect(() => {
+    strikerPositionRef.current = strikerPosition;
+  }, [strikerPosition]);
+  
+  useEffect(() => {
+    strikerVelocityRef.current = strikerVelocity;
+  }, [strikerVelocity]);
+  
+  // Initialize refs with initial values
+  useEffect(() => {
+    scoreRef.current = score;
+    playerTurnRef.current = playerTurn;
+    coinsRef.current = coins;
+    strikerPositionRef.current = strikerPosition;
+    strikerVelocityRef.current = strikerVelocity;
+  }, []);
   
   const boardSize = 600;
   const boardRef = useRef<HTMLDivElement>(null);
@@ -81,7 +123,15 @@ const CarromGame = () => {
     }
     
     setCoins(initialCoins);
-  }, []);
+    
+    // Update game progress
+    if (user) {
+      updateGameProgress(user.username, 'Carrom', {
+        score: 0,
+        lastPlayed: new Date().toISOString(),
+      });
+    }
+  }, [user, updateGameProgress]);
 
   useEffect(() => {
     resetGame();
@@ -173,6 +223,7 @@ const CarromGame = () => {
     };
     
     setStrikerVelocity(newVelocity);
+    strikerVelocityRef.current = newVelocity;
     
     // Start physics simulation
     startPhysicsSimulation();
@@ -184,12 +235,12 @@ const CarromGame = () => {
     const updateGame = () => {
       // Update striker position
       setStrikerPosition(prev => {
-        const newX = prev.x + strikerVelocity.x;
-        const newY = prev.y + strikerVelocity.y;
+        const newX = prev.x + strikerVelocityRef.current.x;
+        const newY = prev.y + strikerVelocityRef.current.y;
         
         // Boundary collision for striker
-        let newVelX = strikerVelocity.x;
-        let newVelY = strikerVelocity.y;
+        let newVelX = strikerVelocityRef.current.x;
+        let newVelY = strikerVelocityRef.current.y;
         
         if (newX - STRIKER_RADIUS <= 0 || newX + STRIKER_RADIUS >= boardSize) {
           newVelX = -newVelX * ELASTICITY;
@@ -203,13 +254,8 @@ const CarromGame = () => {
         newVelX *= FRICTION;
         newVelY *= FRICTION;
         
+        strikerVelocityRef.current = { x: newVelX, y: newVelY };
         setStrikerVelocity({ x: newVelX, y: newVelY });
-        
-        // Check if velocity is low enough to stop
-        if (Math.abs(newVelX) < MIN_VELOCITY && Math.abs(newVelY) < MIN_VELOCITY) {
-          setStrikerVelocity({ x: 0, y: 0 });
-          setTimeout(endTurn, 500); // End turn after a short delay
-        }
         
         // Keep within bounds
         return {
@@ -220,8 +266,12 @@ const CarromGame = () => {
       
       // Update coins position
       setCoins(prevCoins => {
-        return prevCoins.map(coin => {
-          if (coin.status === 'pocketed') return coin;
+        const updatedCoins = [...prevCoins];
+        
+        // Update each coin
+        for (let i = 0; i < updatedCoins.length; i++) {
+          const coin = updatedCoins[i];
+          if (coin.status === 'pocketed') continue;
           
           let newX = coin.position.x + coin.velocity.x;
           let newY = coin.position.y + coin.velocity.y;
@@ -232,10 +282,14 @@ const CarromGame = () => {
           // Boundary collision for coins
           if (newX - coin.radius <= 0 || newX + coin.radius >= boardSize) {
             newVelX = -newVelX * ELASTICITY;
+            // Keep coin within bounds
+            newX = newX - coin.radius <= 0 ? coin.radius : boardSize - coin.radius;
           }
           
           if (newY - coin.radius <= 0 || newY + coin.radius >= boardSize) {
             newVelY = -newVelY * ELASTICITY;
+            // Keep coin within bounds
+            newY = newY - coin.radius <= 0 ? coin.radius : boardSize - coin.radius;
           }
           
           // Apply friction
@@ -252,7 +306,7 @@ const CarromGame = () => {
           
           for (const pocket of pockets) {
             const dist = Math.sqrt(Math.pow(newX - pocket.x, 2) + Math.pow(newY - pocket.y, 2));
-            if (dist < POCKET_RADIUS) {
+            if (dist < POCKET_RADIUS + coin.radius) {
               // Coin pocketed
               if (coin.type === 'white') {
                 setScore(s => ({...s, player1: s.player1 + 10}));
@@ -260,31 +314,108 @@ const CarromGame = () => {
                 setScore(s => ({...s, player2: s.player2 + 10}));
               } else if (coin.type === 'red') {
                 // Queen pocketed - special rule
-                setScore(s => ({...s, [playerTurn === 1 ? 'player1' : 'player2']: s[playerTurn === 1 ? 'player1' : 'player2'] + 20}));
+                setScore(s => ({...s, [playerTurnRef.current === 1 ? 'player1' : 'player2']: s[playerTurnRef.current === 1 ? 'player1' : 'player2'] + 20}));
               }
               
-              return { ...coin, status: 'pocketed' as const, velocity: { x: 0, y: 0 } };
+              updatedCoins[i] = { ...coin, status: 'pocketed' as const, velocity: { x: 0, y: 0 } };
+              
+              // Update game progress
+              if (user) {
+                const currentScore = playerTurnRef.current === 1 ? scoreRef.current.player1 : scoreRef.current.player2;
+                updateGameProgress(user.username, 'Carrom', {
+                  score: currentScore,
+                  lastPlayed: new Date().toISOString(),
+                });
+              }
+              
+              continue; // Skip further processing for pocketed coin
             }
           }
           
-          // Update coin velocity
-          setCoins(prev => prev.map(c => 
-            c.id === coin.id ? { ...c, velocity: { x: newVelX, y: newVelY } } : c
-          ));
+          // Check for collisions with other coins
+          for (let j = 0; j < updatedCoins.length; j++) {
+            if (i === j || updatedCoins[j].status === 'pocketed') continue;
+            
+            const otherCoin = updatedCoins[j];
+            const dx = otherCoin.position.x - newX;
+            const dy = otherCoin.position.y - newY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            // Check if coins are colliding
+            if (distance < coin.radius + otherCoin.radius) {
+              // Calculate collision response
+              const angle = Math.atan2(dy, dx);
+              const sin = Math.sin(angle);
+              const cos = Math.cos(angle);
+              
+              // Rotate velocity vectors
+              const vx1 = newVelX * cos + newVelY * sin;
+              const vy1 = newVelY * cos - newVelX * sin;
+              const vx2 = otherCoin.velocity.x * cos + otherCoin.velocity.y * sin;
+              const vy2 = otherCoin.velocity.y * cos - otherCoin.velocity.x * sin;
+              
+              // Collision response (1D elastic collision)
+              const finalVx1 = ((coin.radius - otherCoin.radius) * vx1 + (2 * otherCoin.radius) * vx2) / (coin.radius + otherCoin.radius);
+              const finalVx2 = ((2 * coin.radius) * vx1 + (otherCoin.radius - coin.radius) * vx2) / (coin.radius + otherCoin.radius);
+              
+              // Update velocities
+              newVelX = finalVx1 * cos - vy1 * sin;
+              newVelY = vy1 * cos + finalVx1 * sin;
+              const newVelX2 = finalVx2 * cos - vy2 * sin;
+              const newVelY2 = vy2 * cos + finalVx2 * sin;
+              
+              // Update the other coin's velocity
+              updatedCoins[j] = { ...updatedCoins[j], velocity: { x: newVelX2, y: newVelY2 } };
+            }
+          }
+          
+          // Check for collision with striker
+          const dxStriker = strikerPositionRef.current.x - newX;
+          const dyStriker = strikerPositionRef.current.y - newY;
+          const distToStriker = Math.sqrt(dxStriker * dxStriker + dyStriker * dyStriker);
+          
+          if (distToStriker < coin.radius + STRIKER_RADIUS) {
+            // Calculate collision response with striker
+            const angle = Math.atan2(dyStriker, dxStriker);
+            const sin = Math.sin(angle);
+            const cos = Math.cos(angle);
+            
+            // Rotate velocity vectors
+            const vx1 = newVelX * cos + newVelY * sin;
+            const vy1 = newVelY * cos - newVelX * sin;
+            const vx2 = strikerVelocityRef.current.x * cos + strikerVelocityRef.current.y * sin;
+            const vy2 = strikerVelocityRef.current.y * cos - strikerVelocityRef.current.x * sin;
+            
+            // Collision response (1D elastic collision)
+            const finalVx1 = ((coin.radius - STRIKER_RADIUS) * vx1 + (2 * STRIKER_RADIUS) * vx2) / (coin.radius + STRIKER_RADIUS);
+            const finalVx2 = ((2 * coin.radius) * vx1 + (STRIKER_RADIUS - coin.radius) * vx2) / (coin.radius + STRIKER_RADIUS);
+            
+            // Update velocities
+            newVelX = finalVx1 * cos - vy1 * sin;
+            newVelY = vy1 * cos + finalVx1 * sin;
+            const newStrikerVelX = finalVx2 * cos - vy2 * sin;
+            const newStrikerVelY = vy2 * cos + finalVx2 * sin;
+            
+            // Update striker velocity
+            strikerVelocityRef.current = { x: newStrikerVelX, y: newStrikerVelY };
+            setStrikerVelocity({ x: newStrikerVelX, y: newStrikerVelY });
+          }
           
           // Check if velocity is low enough to stop
           if (Math.abs(newVelX) < MIN_VELOCITY && Math.abs(newVelY) < MIN_VELOCITY) {
-            return { ...coin, position: { x: newX, y: newY }, velocity: { x: 0, y: 0 } };
+            updatedCoins[i] = { ...coin, position: { x: newX, y: newY }, velocity: { x: 0, y: 0 } };
+          } else {
+            updatedCoins[i] = { ...coin, position: { x: newX, y: newY }, velocity: { x: newVelX, y: newVelY } };
           }
-          
-          return { ...coin, position: { x: newX, y: newY } };
-        });
+        }
+        
+        return updatedCoins;
       });
       
-      // Continue animation if any piece is still moving
-      const anyMoving = Math.abs(strikerVelocity.x) > MIN_VELOCITY || 
-                       Math.abs(strikerVelocity.y) > MIN_VELOCITY ||
-                       coins.some(coin => 
+      // Check if all pieces have stopped moving
+      const anyMoving = Math.abs(strikerVelocityRef.current.x) > MIN_VELOCITY || 
+                       Math.abs(strikerVelocityRef.current.y) > MIN_VELOCITY ||
+                       coinsRef.current.some(coin => 
                          coin.status === 'on-board' && 
                          (Math.abs(coin.velocity.x) > MIN_VELOCITY || Math.abs(coin.velocity.y) > MIN_VELOCITY)
                        );
@@ -301,7 +432,67 @@ const CarromGame = () => {
   
   const endTurn = () => {
     setGameState('placing');
-    setPlayerTurn(prev => prev === 1 ? 2 : 1);
+    
+    // Check if the striker went into a pocket (foul)
+    const strikerX = strikerPositionRef.current.x;
+    const strikerY = strikerPositionRef.current.y;
+    const pockets = [
+      { x: 15, y: 15 },   // top-left
+      { x: boardSize - 15, y: 15 }, // top-right
+      { x: 15, y: boardSize - 15 }, // bottom-left
+      { x: boardSize - 15, y: boardSize - 15 } // bottom-right
+    ];
+    
+    const strikerInPocket = pockets.some(pocket => {
+      const dist = Math.sqrt(Math.pow(strikerX - pocket.x, 2) + Math.pow(strikerY - pocket.y, 2));
+      return dist < POCKET_RADIUS + STRIKER_RADIUS;
+    });
+    
+    if (strikerInPocket) {
+      // Foul: opponent gets a point
+      if (playerTurnRef.current === 1) {
+        setScore(s => ({...s, player2: s.player2 + 5}));
+      } else {
+        setScore(s => ({...s, player1: s.player1 + 5}));
+      }
+    }
+    
+    // Check if the player pocketed any coins
+    const playerPocketedCoins = coinsRef.current.some(coin => 
+      coin.status === 'pocketed' && 
+      ((playerTurnRef.current === 1 && coin.type === 'white') || (playerTurnRef.current === 2 && coin.type === 'black'))
+    );
+    
+    // Check if the player pocketed the queen
+    const queenPocketed = coinsRef.current.some(coin => 
+      coin.status === 'pocketed' && 
+      coin.type === 'red'
+    );
+    
+    // If player pocketed coins or queen, they get another turn
+    if (playerPocketedCoins || queenPocketed) {
+      // If queen was pocketed, check if the player has pocketed at least one coin of their type
+      if (queenPocketed) {
+        const playerCoinsPocketed = coinsRef.current.filter(coin => 
+          coin.status === 'pocketed' && 
+          ((playerTurnRef.current === 1 && coin.type === 'white') || (playerTurnRef.current === 2 && coin.type === 'black'))
+        ).length;
+        
+        if (playerCoinsPocketed > 0) {
+          // Queen and player's coin pocketed - Queen is returned to board
+          setCoins(prevCoins => {
+            return prevCoins.map(coin => 
+              coin.type === 'red' ? { ...coin, status: 'on-board', position: { x: 300, y: 300 } } : coin
+            );
+          });
+        }
+      }
+      
+      // Player gets another turn if they pocketed a coin
+    } else {
+      // No coins pocketed, switch turn
+      setPlayerTurn(prev => prev === 1 ? 2 : 1);
+    }
   };
 
   // Handle power for shot strength
