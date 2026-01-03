@@ -421,6 +421,16 @@ const CandyCrushGame = () => {
             >
               Next Level
             </button>
+            <button 
+              className="ps5-button ps5-button--secondary"
+              onClick={() => {
+                setLevelComplete(false);
+                setGameActive(true);
+              }}
+              style={{ position: 'absolute', top: '10px', right: '10px' }}
+            >
+              ✕
+            </button>
           </div>
         )}
 
@@ -447,6 +457,16 @@ const CandyCrushGame = () => {
               onClick={restartGame}
             >
               Try Again
+            </button>
+            <button 
+              className="ps5-button ps5-button--secondary"
+              onClick={() => {
+                setGameOver(false);
+                setGameActive(true);
+              }}
+              style={{ position: 'absolute', top: '10px', right: '10px' }}
+            >
+              ✕
             </button>
           </div>
         )}

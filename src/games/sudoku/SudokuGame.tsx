@@ -146,7 +146,6 @@ const SudokuGame: React.FC = () => {
       if (grid.length > 0 && checkCompletion()) {
           setCompleted(true);
           if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
-          setShowWinModal(true);
           PS5Animator.createNotification("🎉 Congratulations! Puzzle solved!", "success");
       }
   }, [grid, checkCompletion]);
@@ -170,7 +169,6 @@ const SudokuGame: React.FC = () => {
             setMistakes(prev => {
                 const newMistakes = prev + 1;
                 if (newMistakes >= 3) {
-                    setShowGameOverModal(true);
                     if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
                 }
                 return newMistakes;
@@ -262,23 +260,19 @@ const SudokuGame: React.FC = () => {
 
         <button className="ps5-button" onClick={generatePuzzle} style={{ width: '100%', maxWidth: '300px' }}>New Game</button>
 
-        {showWinModal && (
-          <div className="ps5-modal">
-            <div className="ps5-modal-content ps5-card" style={{padding: '30px', textAlign: 'center'}}>
-              <h2 style={{ margin: '0 0 15px', color: 'var(--ps5-success)' }}>🎉 Congratulations!</h2>
-              <p style={{ margin: '0 0 20px' }}>You solved the puzzle in {formatTime(timer)} with {mistakes} mistakes!</p>
-              <button className="ps5-button ps5-button--success" onClick={() => {setShowWinModal(false); generatePuzzle();}}>Play Again</button>
-            </div>
+        {completed && (
+          <div className="ps5-card" style={{ padding: '20px', backgroundColor: 'var(--ps5-gradient-success)', textAlign: 'center', width: '100%', maxWidth: '400px' }}>
+            <h2 style={{ margin: '0 0 15px', color: 'white' }}>🎉 Congratulations!</h2>
+            <p style={{ margin: '0 0 15px', color: 'white' }}>You solved the puzzle in {formatTime(timer)} with {mistakes} mistakes!</p>
+            <button className="ps5-button ps5-button--success" onClick={generatePuzzle}>Play Again</button>
           </div>
         )}
 
-        {showGameOverModal && (
-          <div className="ps5-modal">
-            <div className="ps5-modal-content ps5-card" style={{padding: '30px', textAlign: 'center'}}>
-              <h2 style={{ margin: '0 0 15px', color: 'var(--ps5-danger)' }}>💀 Game Over</h2>
-              <p style={{ margin: '0 0 20px' }}>You made too many mistakes. Try again!</p>
-              <button className="ps5-button ps5-button--danger" onClick={() => {setShowGameOverModal(false); generatePuzzle();}}>Try Again</button>
-            </div>
+        {mistakes >= 3 && !completed && (
+          <div className="ps5-card" style={{ padding: '20px', backgroundColor: 'var(--ps5-gradient-danger)', textAlign: 'center', width: '100%', maxWidth: '400px' }}>
+            <h2 style={{ margin: '0 0 15px', color: 'white' }}>💀 Game Over</h2>
+            <p style={{ margin: '0 0 15px', color: 'white' }}>You made too many mistakes. Try again!</p>
+            <button className="ps5-button ps5-button--danger" onClick={generatePuzzle}>Try Again</button>
           </div>
         )}
       </div>

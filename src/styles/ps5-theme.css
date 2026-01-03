@@ -1,7 +1,7 @@
 /* PS5 Theme CSS - Dark, Modern Gaming Interface */
 
 :root {
-  /* PS5 Color Palette */
+  /* PS5 Dark Color Palette */
   --ps5-dark-bg: #0f0f23;
   --ps5-darker-bg: #0a0a16;
   --ps5-accent-blue: #00f7ff;
@@ -10,6 +10,22 @@
   --ps5-success: #00c853;
   --ps5-warning: #ffab00;
   --ps5-danger: #ff5252;
+  --ps5-text: #ffffff;
+  --ps5-card-bg: rgba(15, 15, 35, 0.8);
+  --ps5-card-border: var(--ps5-accent-blue);
+  
+  /* PS5 Light Color Palette */
+  --ps5-light-bg: #f0f0f5;
+  --ps5-lighter-bg: #ffffff;
+  --ps5-light-accent-blue: #0066cc;
+  --ps5-light-accent-purple: #6640b2;
+  --ps5-light-highlight: #00aaff;
+  --ps5-light-success: #00a85a;
+  --ps5-light-warning: #ff9500;
+  --ps5-light-danger: #ff3b30;
+  --ps5-light-text: #333333;
+  --ps5-light-card-bg: rgba(255, 255, 255, 0.8);
+  --ps5-light-card-border: var(--ps5-light-accent-blue);
   
   /* Gradients */
   --ps5-gradient-primary: linear-gradient(135deg, var(--ps5-accent-blue), var(--ps5-accent-purple));
@@ -17,12 +33,19 @@
   --ps5-gradient-success: linear-gradient(135deg, var(--ps5-success), #007e33);
   --ps5-gradient-warning: linear-gradient(135deg, var(--ps5-warning), #cc8800);
   --ps5-gradient-danger: linear-gradient(135deg, var(--ps5-danger), #d32f2f);
+  --ps5-gradient-primary-light: linear-gradient(135deg, var(--ps5-light-accent-blue), var(--ps5-light-accent-purple));
+  --ps5-gradient-secondary-light: linear-gradient(135deg, var(--ps5-light-bg), var(--ps5-lighter-bg));
+  --ps5-gradient-success-light: linear-gradient(135deg, var(--ps5-light-success), #007e33);
+  --ps5-gradient-warning-light: linear-gradient(135deg, var(--ps5-light-warning), #cc8800);
+  --ps5-gradient-danger-light: linear-gradient(135deg, var(--ps5-light-danger), #d32f2f);
   
   /* Shadows & Effects */
   --ps5-glow: 0 0 20px rgba(0, 247, 255, 0.6);
   --ps5-glow-strong: 0 0 30px rgba(0, 247, 255, 0.8);
   --ps5-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   --ps5-inset-glow: inset 0 0 15px rgba(0, 247, 255, 0.2);
+  --ps5-light-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  --ps5-light-glow: 0 0 20px rgba(0, 102, 204, 0.3);
   
   /* Spacing & Sizes */
   --ps5-border-radius: 16px;
@@ -46,10 +69,39 @@
   --ps5-transition-slow: 0.5s;
 }
 
+/* Light Theme */
+[data-theme="light"] {
+  /* Background and Text Colors */
+  --ps5-gradient-secondary: var(--ps5-gradient-secondary-light);
+  --ps5-text: var(--ps5-light-text);
+  --ps5-card-bg: var(--ps5-light-card-bg);
+  --ps5-card-border: var(--ps5-light-card-border);
+  
+  /* Accent Colors */
+  --ps5-gradient-primary: var(--ps5-gradient-primary-light);
+  --ps5-accent-blue: var(--ps5-light-accent-blue);
+  --ps5-accent-purple: var(--ps5-light-accent-purple);
+  --ps5-highlight: var(--ps5-light-highlight);
+  --ps5-success: var(--ps5-light-success);
+  --ps5-warning: var(--ps5-light-warning);
+  --ps5-danger: var(--ps5-light-danger);
+  
+  /* Gradients */
+  --ps5-gradient-success: var(--ps5-gradient-success-light);
+  --ps5-gradient-warning: var(--ps5-gradient-warning-light);
+  --ps5-gradient-danger: var(--ps5-gradient-danger-light);
+  
+  /* Shadows & Effects */
+  --ps5-shadow: var(--ps5-light-shadow);
+  --ps5-glow: var(--ps5-light-glow);
+  --ps5-glow-strong: 0 0 30px rgba(0, 102, 204, 0.4);
+  --ps5-inset-glow: inset 0 0 15px rgba(0, 102, 204, 0.1);
+}
+
 /* Global PS5 Styles */
 .ps5-container {
   background: var(--ps5-gradient-secondary);
-  color: white;
+  color: var(--ps5-text);
   font-family: var(--ps5-font-family);
   min-height: 100vh;
   position: relative;
@@ -71,11 +123,11 @@
 
 /* PS5 Card Components */
 .ps5-card {
-  background: rgba(15, 15, 35, 0.8);
+  background: var(--ps5-card-bg);
   border-radius: var(--ps5-border-radius);
   padding: var(--ps5-padding);
   box-shadow: var(--ps5-shadow), var(--ps5-inset-glow);
-  border: 2px solid var(--ps5-accent-blue);
+  border: 2px solid var(--ps5-card-border);
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(10px);
@@ -170,7 +222,7 @@
 }
 
 .ps5-game-card {
-  background: rgba(15, 15, 35, 0.9);
+  background: var(--ps5-card-bg);
   border-radius: var(--ps5-border-radius);
   padding: var(--ps5-padding);
   cursor: pointer;
@@ -219,7 +271,7 @@
 .ps5-game-name {
   font-size: var(--ps5-font-size-lg);
   font-weight: bold;
-  color: white;
+  color: var(--ps5-text);
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 

@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import '../../styles/ps5-theme.css';
 
 const Header = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <header style={{ 
@@ -32,7 +34,7 @@ const Header = () => {
           alignItems: 'center'
         }}>
           <span style={{ marginRight: '10px' }}>🎮</span>
-          PS5 GameHub
+          GameHub
         </Link>
 
         <nav style={{ display: 'flex', gap: '20px' }}>
@@ -103,6 +105,28 @@ const Header = () => {
           </Link>
           
           <Link 
+            to="/tasks" 
+            style={{ 
+              color: 'white', 
+              textDecoration: 'none',
+              padding: '8px 16px',
+              borderRadius: '8px',
+              transition: 'background-color 0.3s',
+              border: '1px solid transparent'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(0, 247, 255, 0.1)';
+              e.currentTarget.style.borderColor = 'var(--ps5-accent-blue)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.borderColor = 'transparent';
+            }}
+          >
+            Tasks
+          </Link>
+          
+          <Link 
             to="/settings" 
             style={{ 
               color: 'white', 
@@ -126,9 +150,27 @@ const Header = () => {
         </nav>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <button 
+            onClick={toggleTheme}
+            className="ps5-button"
+            style={{ 
+              padding: '8px 12px', 
+              fontSize: '16px',
+              minWidth: 'auto',
+              width: '40px',
+              height: '40px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--ps5-light-text)'
+            }}
+            title="Toggle theme"
+          >
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
           {isAuthenticated ? (
             <>
-              <span style={{ color: 'var(--ps5-accent-blue)' }}>Welcome!</span>
+              <span style={{ color: 'var(--ps5-accent-blue)' }}>Welcome, {user?.username}!</span>
               <button 
                 className="ps5-button"
                 onClick={logout}

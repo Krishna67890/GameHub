@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import PS5GameWrapper from '../../components/PS5GameWrapper';
 import PS5Animator from '../../utils/ps5-animator';
+import { useGame } from '../../components/context/GameContext';
+import { useAuth } from '../../components/context/AuthContext';
 import '../../styles/ps5-theme.css';
+import './FlappyBirdGame.css';
 
 const FlappyBirdGame = () => {
+  const { user } = useAuth();
+  const { updateGameProgress } = useGame();
   const [gameState, setGameState] = useState<'welcome' | 'playing' | 'gameOver'>('welcome');
   const [playerName, setPlayerName] = useState('');
   const [score, setScore] = useState(0);
@@ -12,9 +17,14 @@ const FlappyBirdGame = () => {
   // Refs for game state to avoid stale closures in game loop
   const birdPositionRef = useRef(300);
   const birdVelocityRef = useRef(0);
-  const pipesRef = useRef<any[]>([]);
   const gameSpeedRef = useRef(2);
   const scoreRef = useRef(0);
+  
+  // State for pipes to ensure proper rendering
+  const [pipes, setPipes] = useState<any[]>([]);
+  
+  // Ref to keep track of pipes
+  const pipesRef = useRef<any[]>([]);
 
   const gameLoopRef = useRef<number | null>(null);
   const lastFrameTimeRef = useRef<number>(0);
@@ -45,12 +55,21 @@ const FlappyBirdGame = () => {
     birdPositionRef.current = 300;
     birdVelocityRef.current = 0;
     pipesRef.current = [];
+    setPipes([]);
     gameSpeedRef.current = 2;
     lastPipeTimeRef.current = performance.now();
+    
+    // Update game progress when game starts
+    if (user) {
+      updateGameProgress(user.username, 'Flappy Bird', {
+        score: 0,
+        lastPlayed: new Date().toISOString(),
+      });
+    }
 
     lastFrameTimeRef.current = performance.now();
     gameLoopRef.current = requestAnimationFrame(gameLoop);
-  }, [playerName]);
+  }, [playerName, user, updateGameProgress]);
 
   const handleJump = useCallback(() => {
     if (gameState === 'playing') {
@@ -62,11 +81,15 @@ const FlappyBirdGame = () => {
     const minHeight = 50;
     const maxHeight = BOARD_HEIGHT - PIPE_GAP - minHeight - 60;
     const topHeight = Math.floor(Math.random() * (maxHeight - minHeight + 1)) + minHeight;
-
+    
+    const newPipe = { id: Date.now(), x: BOARD_WIDTH, topHeight, passed: false };
+    
     pipesRef.current = [
       ...pipesRef.current,
-      { id: Date.now(), x: BOARD_WIDTH, topHeight, passed: false }
+      newPipe
     ];
+    
+    setPipes(prev => [...prev, newPipe]);
   }, [PIPE_GAP]);
 
   const checkCollisions = useCallback(() => {
@@ -94,7 +117,7 @@ const FlappyBirdGame = () => {
     }
 
     return false;
-  }, [PIPE_GAP]);
+  }, [PIPE_GAP, pipes]);
 
   const gameLoop = useCallback((timestamp: number) => {
     const deltaTime = timestamp - lastFrameTimeRef.current;
@@ -115,30 +138,36 @@ const FlappyBirdGame = () => {
 
     // Update pipes
     let scoreGained = 0;
-    pipesRef.current = pipesRef.current.map(pipe => {
+    const updatedPipes = pipesRef.current.map(pipe => {
       const newX = pipe.x - gameSpeedRef.current * timeScale;
       if (!pipe.passed && newX + 80 < 80) {
-        scoreGained++;
+        scoreGained++; 
         return { ...pipe, x: newX, passed: true };
       }
       return { ...pipe, x: newX };
     }).filter(pipe => pipe.x > -80);
-
+        
+    pipesRef.current = updatedPipes;
+    setPipes(updatedPipes);
+    
     if (scoreGained > 0) {
         scoreRef.current += scoreGained;
         setScore(scoreRef.current);
+            
+        // Update game progress when score increases
+        if (user) {
+          updateGameProgress(user.username, 'Flappy Bird', {
+            score: scoreRef.current,
+            lastPlayed: new Date().toISOString(),
+          });
+        }
+            
         if (scoreRef.current % 5 === 0) {
             gameSpeedRef.current = Math.min(4, gameSpeedRef.current + 0.1);
         }
     }
 
-    // Update pipe UI
-    const pipeElements = document.querySelectorAll('.pipe');
-    pipeElements.forEach((pipeEl, index) => {
-        if (pipesRef.current[index]) {
-           (pipeEl as HTMLElement).style.left = `${pipesRef.current[index].x}px`;
-        }
-    });
+
 
     // Generate new pipes
     if (timestamp - lastPipeTimeRef.current > PIPE_FREQUENCY) {
@@ -149,6 +178,15 @@ const FlappyBirdGame = () => {
     // Check collisions
     if (checkCollisions()) {
       setGameState('gameOver');
+      
+      // Update game progress when game ends
+      if (user) {
+        updateGameProgress(user.username, 'Flappy Bird', {
+          score: scoreRef.current,
+          lastPlayed: new Date().toISOString(),
+        });
+      }
+      
       if (scoreRef.current > highScore) {
         setHighScore(scoreRef.current);
         localStorage.setItem('flappyBirdHighScore', scoreRef.current.toString());
@@ -173,6 +211,21 @@ const FlappyBirdGame = () => {
       if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
     };
   }, [gameState]);
+  
+  // Create an initial pipe when game starts playing
+  useEffect(() => {
+    if (gameState === 'playing' && pipesRef.current.length === 0) {
+      // Create an initial pipe at a position that will appear on screen
+      const initialPipe = {
+        id: Date.now(),
+        x: BOARD_WIDTH, // Start at the right edge of the screen
+        topHeight: Math.floor(Math.random() * (BOARD_HEIGHT - PIPE_GAP - 100)) + 50,
+        passed: false
+      };
+      pipesRef.current = [initialPipe];
+      setPipes([initialPipe]);
+    }
+  }, [gameState]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -187,19 +240,34 @@ const FlappyBirdGame = () => {
 
   const restartGame = () => {
     setGameState('welcome');
+    
+    // Update game progress when restarting
+    if (user) {
+      updateGameProgress(user.username, 'Flappy Bird', {
+        score: 0,
+        lastPlayed: new Date().toISOString(),
+      });
+    }
+    
     setTimeout(() => startGame(), 100); 
   };
 
-  const DynamicPipes = React.memo(() => {
+  const DynamicPipes = () => {
       return (
-          <>{pipesRef.current.map(pipe => (
+          <>{pipes.map(pipe => (
               <React.Fragment key={pipe.id}>
-                <div className="pipe" style={{ left: `${pipe.x}px`, top: 0, height: `${pipe.topHeight}px`}} />
-                <div className="pipe" style={{ left: `${pipe.x}px`, bottom: '60px', height: `${BOARD_HEIGHT - pipe.topHeight - PIPE_GAP - 60}px`}} />
+                {/* Top pipe */}
+                <div className="pipe" style={{ left: `${pipe.x}px`, top: 0, height: `${pipe.topHeight}px`, position: 'absolute', width: '80px', background: 'linear-gradient(to bottom, #2E7D32, #4CAF50, #2E7D32)', border: '3px solid #1B5E20', boxShadow: '0 0 15px rgba(46, 125, 50, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.3)', zIndex: 5 }}>
+                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '20px', background: '#1B5E20', border: '2px solid #0D5D0D', borderRadius: '3px' }} />
+                </div>
+                {/* Bottom pipe */}
+                <div className="pipe" style={{ left: `${pipe.x}px`, bottom: '60px', height: `${BOARD_HEIGHT - pipe.topHeight - PIPE_GAP - 60}px`, position: 'absolute', width: '80px', background: 'linear-gradient(to top, #2E7D32, #4CAF50, #2E7D32)', border: '3px solid #1B5E20', boxShadow: '0 0 15px rgba(46, 125, 50, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.3)', zIndex: 5 }}>
+                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '20px', background: '#1B5E20', border: '2px solid #0D5D0D', borderRadius: '3px' }} />
+                </div>
               </React.Fragment>
             ))}</>
       )
-  });
+  };
   
   if (gameState === 'welcome') {
     return (
@@ -251,15 +319,42 @@ const FlappyBirdGame = () => {
 
   return (
     <PS5GameWrapper gameTitle="Flappy Bird" onBack={() => window.history.back()}>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', gap: '15px' }}>
+      <div className="flappy-bird-game" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', gap: '15px' }}>
         <div className="ps5-card" style={{ width: '100%', maxWidth: '400px', textAlign: 'center', padding: '15px' }}>
           <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--ps5-accent-blue)', textShadow: '0 0 10px var(--ps5-accent-blue)' }}>Score: {score}</div>
           <div style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.7)' }}>Player: {playerName || 'Player'}</div>
         </div>
-        <div ref={gameContainerRef} onClick={handleJump} style={{ position: 'relative', width: `${BOARD_WIDTH}px`, height: `${BOARD_HEIGHT}px`, background: 'linear-gradient(to bottom, #70c5ce 0%, #4aa5cf 100%)', border: '4px solid var(--ps5-accent-blue)', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', boxShadow: '0 0 30px rgba(0, 247, 255, 0.3)' }}>
+        <div ref={gameContainerRef} onClick={handleJump} style={{ position: 'relative', width: '100%', maxWidth: `${BOARD_WIDTH}px`, height: `${BOARD_HEIGHT}px`, background: 'linear-gradient(to bottom, #70c5ce 0%, #4aa5cf 100%)', border: '4px solid var(--ps5-accent-blue)', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', boxShadow: '0 0 30px rgba(0, 247, 255, 0.3)' }}>
+          {/* Decorative background elements */}
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '100px', background: 'linear-gradient(to bottom, rgba(255,255,255,0.1), transparent)', zIndex: 1 }} />
+          <div style={{ position: 'absolute', bottom: 60, left: 0, right: 0, height: '100px', background: 'linear-gradient(to top, rgba(255,255,255,0.1), transparent)', zIndex: 1 }} />
+          
           <div id="flappy-bird" style={{ position: 'absolute', left: '80px', top: `${birdPositionRef.current}px`, width: `${BIRD_SIZE.width}px`, height: `${BIRD_SIZE.height}px`, background: 'linear-gradient(45deg, #FFCC00, #FFA500)', borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%', zIndex: 10, display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '1.5rem' }}>🐦</div>
           <DynamicPipes />
-          <div style={{ position: 'absolute', bottom: 0, width: '800px', height: '60px', background: 'linear-gradient(to right, #D9A441, #C8963E)', zIndex: 20, transform: `translateX(0px)` }} />
+          <div style={{ position: 'absolute', bottom: 0, width: '100%', height: '60px', background: 'linear-gradient(to right, #D9A441, #C8963E)', zIndex: 20 }} />
+        </div>
+        
+        {/* Mobile Jump Button */}
+        <div style={{ position: 'fixed', bottom: '20px', left: '50%', transform: 'translateX(-50%)', zIndex: 100 }}>
+          <button 
+            className="ps5-button"
+            onClick={handleJump}
+            style={{
+              width: '80px',
+              height: '80px',
+              borderRadius: '50%',
+              fontSize: '1.5rem',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              boxShadow: '0 0 20px rgba(0, 247, 255, 0.7)',
+              border: '3px solid var(--ps5-accent-blue)',
+              backgroundColor: 'rgba(0, 0, 0, 0.7)'
+            }}
+            aria-label="Jump"
+          >
+            🚀
+          </button>
         </div>
       </div>
     </PS5GameWrapper>

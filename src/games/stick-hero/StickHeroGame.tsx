@@ -318,16 +318,28 @@ const StickHeroGame: React.FC = () => {
 
         // Draw Platforms
         state.current.platforms.forEach(platform => {
+            // Draw platform with better visibility
             ctx.fillStyle = config.platformColor;
             ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
             
-            // 3D effect side
+            // Platform top edge (more visible)
+            ctx.fillStyle = '#654321';
+            ctx.fillRect(platform.x, platform.y, platform.width, 5);
+            
+            // Platform side edges
             ctx.fillStyle = config.platformSideColor;
-            ctx.fillRect(platform.x, platform.y + platform.height, platform.width, 10); // Not really visible if height goes to bottom
+            ctx.fillRect(platform.x, platform.y, 5, platform.height);
+            ctx.fillRect(platform.x + platform.width - 5, platform.y, 5, platform.height);
+            
+            // Platform bottom edge
+            ctx.fillStyle = '#5D4037';
+            ctx.fillRect(platform.x, platform.y + platform.height - 5, platform.width, 5);
             
             // Center red dot for bonus (optional, often in Stick Hero)
-            ctx.fillStyle = 'red';
-            ctx.fillRect(platform.x + platform.width/2 - 5, platform.y, 10, 5);
+            ctx.fillStyle = '#FF5252';
+            ctx.beginPath();
+            ctx.arc(platform.x + platform.width/2, platform.y + 3, 6, 0, 2 * Math.PI);
+            ctx.fill();
         });
 
         // Draw Stick

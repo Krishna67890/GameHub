@@ -1,59 +1,139 @@
-.kho-kho-game-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    width: 100%;
-    height: 100%;
+.kho-kho-game {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.kho-kho-game > div {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  height: 100%;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.game-header {
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+}
+
+.game-title {
+  font-size: 2.2rem;
+  margin: 0;
+  margin-bottom: 5px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(to right, #FFD700, #FFA500);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.game-stats {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.stat-item {
+  font-size: 1rem;
+  padding: 5px 10px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+}
+
+.game-board-container {
+  width: min(90vw, 400px);
+  height: min(90vw, 400px);
+  position: relative;
+  border: 3px solid var(--ps5-accent-blue);
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 .game-board {
-    display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    gap: 5px;
-    background-color: #27ae60;
-    padding: 10px;
-    border-radius: 15px;
-    border: 4px solid #f1c40f;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  width: 100%;
+  height: 100%;
 }
 
 .cell {
-    aspect-ratio: 1;
-    background-color: rgba(0,0,0,0.1);
-    border-radius: 8px;
-    position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
 }
 
-.player {
-    width: 80%;
-    height: 80%;
-    border-radius: 50%;
-    position: absolute;
-    top: 10%;
-    left: 10%;
-    display: flex;
-    justify-content: center;
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .game-title {
+    font-size: 1.8rem;
+  }
+  
+  .game-stats {
+    flex-direction: column;
     align-items: center;
-    font-weight: bold;
-    color: white;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-}
-
-.chaser { background-color: #e74c3c; }
-.runner { background-color: #2ecc71; }
-.defender { background-color: #3498db; }
-
-.power-up::after {
-    content: '⚡';
-    position: absolute;
-    top: -5px;
-    right: -5px;
+    gap: 8px;
+  }
+  
+  .stat-item {
+    font-size: 0.9rem;
+  }
+  
+  .game-board-container {
+    width: 95vw;
+    height: 95vw;
+    max-width: 350px;
+    max-height: 350px;
+  }
+  
+  .cell {
     font-size: 1.2rem;
-    color: #f1c40f;
-}
-
-.caught {
-    opacity: 0.5;
-    filter: grayscale(1);
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .ps5-button {
+    width: 100%;
+    max-width: 200px;
+  }
 }

@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import PS5GameWrapper from '../../components/PS5GameWrapper';
 import PS5Animator from '../../utils/ps5-animator';
+import { useGame } from '../../components/context/GameContext';
+import { useAuth } from '../../components/context/AuthContext';
 import '../../styles/ps5-theme.css';
 
 const TicTacToeGame = () => {
+  const { user } = useAuth();
+  const { updateGameProgress } = useGame();
   const [board, setBoard] = useState<(string | null)[]>(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState(true);
   const [scores, setScores] = useState({ x: 0, o: 0 });
@@ -57,12 +61,28 @@ const TicTacToeGame = () => {
     setWinner(null);
     setIsTie(false);
     setXIsNext(true);
+    
+    // Update game progress when resetting board
+    if (user) {
+      updateGameProgress(user.username, 'Tic Tac Toe', {
+        completed: false,
+        lastPlayed: new Date().toISOString(),
+      });
+    }
   };
 
   const resetGame = () => {
     resetBoard();
     setScores({ x: 0, o: 0 });
     setGameStarted(false);
+    
+    // Update game progress when resetting
+    if (user) {
+      updateGameProgress(user.username, 'Tic Tac Toe', {
+        score: 0,
+        lastPlayed: new Date().toISOString(),
+      });
+    }
   };
 
   useEffect(() => {
@@ -76,10 +96,30 @@ const TicTacToeGame = () => {
         setScores(prev => ({ ...prev, o: prev.o + 1 }));
         PS5Animator.createNotification(`${playerNames.o} wins the round!`, "success");
       }
+      
+      // Update game progress when a game is completed
+      if (user) {
+        updateGameProgress(user.username, 'Tic Tac Toe', {
+          completed: true,
+          score: Math.max(scores.x, scores.o) + 1, // Increment the higher score
+          lastPlayed: new Date().toISOString(),
+        });
+      }
+      
       setTimeout(resetBoard, 2000);
     } else if (board.every(square => square !== null)) {
       setIsTie(true);
       PS5Animator.createNotification("It's a tie!", "warning");
+      
+      // Update game progress when a game is completed (tie)
+      if (user) {
+        updateGameProgress(user.username, 'Tic Tac Toe', {
+          completed: false, // Tie is not a win
+          score: Math.max(scores.x, scores.o),
+          lastPlayed: new Date().toISOString(),
+        });
+      }
+      
       setTimeout(resetBoard, 2000);
     }
   }, [board, playerNames]);

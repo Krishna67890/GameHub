@@ -25,10 +25,10 @@ const Footer = () => {
             margin: '0 0 10px 0',
             fontSize: '1.2rem'
           }}>
-            🎮 PS5 GameHub
+            🎮 GameHub
           </h3>
           <p style={{ margin: 0, color: 'rgba(255, 255, 255, 0.7)' }}>
-            Experience the power of PlayStation 5 gaming
+            Experience the power of GameHub
           </p>
         </div>
         
@@ -62,7 +62,7 @@ const Footer = () => {
         
         <div style={{ textAlign: 'right' }}>
           <p style={{ margin: '0 0 10px 0', color: 'rgba(255, 255, 255, 0.7)' }}>
-            © 2026 PS5 GameHub
+            © 2026 GameHub
           </p>
           <p style={{ margin: 0, color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.9rem' }}>
             Experience the Future of Gaming

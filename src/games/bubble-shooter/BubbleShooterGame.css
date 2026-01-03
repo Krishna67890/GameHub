@@ -1,45 +1,113 @@
-.bubble-shooter-container {
-    position: relative;
-    margin: 0 auto;
-    max-width: 100%;
-    overflow: hidden;
-  }
-  #gameCanvas {
-    display: block;
-    margin: auto;
-    background: radial-gradient(circle, #555, #000);
-    box-shadow: 0 0 20px #000;
-    width: 100%;
-    height: 80vh;
-  }
-  #score {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: white;
-    font-size: 24px;
-    font-family: Arial, sans-serif;
-    z-index: 10;
-  }
-  #controls {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 10px;
-    z-index: 10;
-  }
-  button {
-    padding: 10px 20px;
-    font-size: 18px;
-    cursor: pointer;
-    background: #444;
-    color: white;
-    border: none;
-    border-radius: 5px;
-  }
-  button:hover {
-    background: #666;
-  }
+/* Bubble Shooter Game Styles */
+.bubble-shooter-board {
+  background: linear-gradient(135deg, #1A237E, #311B92);
+  position: relative;
+  border: 4px solid var(--ps5-accent-blue);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.bubble-shooter-bubble {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid white;
+  z-index: 2;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.bubble-shooter-shooter {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+}
+
+.bubble-shooter-cannon {
+  position: absolute;
+  width: 10px;
+  height: 40px;
+  background: #FFD700;
+  transform-origin: bottom center;
+  z-index: 4;
+}
+
+/* Background pattern */
+.bubble-shooter-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(circle at 10% 20%, rgba(100, 150, 255, 0.1) 0%, transparent 20%);
+  z-index: 0;
+}
+
+/* Game container */
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  height: 100%;
+  padding: 20px;
+}
+
+.ps5-card {
+  background: linear-gradient(135deg, #2e3d49, #1a1a2e);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--ps5-accent-blue);
+  color: white;
+}
+
+.ps5-button {
+  background: linear-gradient(135deg, #2e3d49, #1a1a2e);
+  border: 2px solid var(--ps5-accent-blue);
+  border-radius: 10px;
+  padding: 12px 24px;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.ps5-button:hover {
+  background: linear-gradient(135deg, #00f7ff, #0077ff);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 247, 255, 0.4);
+}
+
+.ps5-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.ps5-input {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid var(--ps5-accent-blue);
+  border-radius: 10px;
+  padding: 12px;
+  color: white;
+  font-size: 1rem;
+}
+
+.ps5-input:focus {
+  outline: none;
+  border-color: #00f7ff;
+  box-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
+}

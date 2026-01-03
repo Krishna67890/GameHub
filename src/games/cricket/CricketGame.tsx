@@ -148,19 +148,21 @@ const CricketGame = () => {
             <div id="batsman"></div>
             <div id="bowler"></div>
             <div id="ball" ref={ballRef}></div>
+            <div className="stumps"></div>
+            <div className="stumps-2"></div>
         </div>
 
         <div className="shot-controls">
             {Object.keys(shotTypes).map(shot => (
                 <button key={shot} className="shot-button" onClick={() => playShot(shot as any)} disabled={gameState.isGameOver}>
-                    {shot}
+                    {shot.charAt(0).toUpperCase() + shot.slice(1)}
                     <span className="shot-risk">{shotTypes[shot as keyof typeof shotTypes].wicketChance * 100}% Risk</span>
                 </button>
             ))}
         </div>
 
         <div id="commentary-box">{gameState.commentary}</div>
-        {gameState.isGameOver && <button className="ps5-button" onClick={resetGame}>Play Again?</button>}
+        {gameState.isGameOver && <button className="ps5-button" onClick={resetGame}>Play Again</button>}
       </div>
     </PS5GameWrapper>
   );

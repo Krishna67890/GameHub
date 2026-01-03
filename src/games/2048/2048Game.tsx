@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import PS5GameWrapper from '../../components/PS5GameWrapper';
+import { useGame } from '../../components/context/GameContext';
+import { useAuth } from '../../components/context/AuthContext';
 import '../../styles/ps5-theme.css';
 
 const Game2048 = () => {
+  const { user } = useAuth();
+  const { updateGameProgress } = useGame();
   const [board, setBoard] = useState<number[][]>([]);
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
@@ -56,6 +60,15 @@ const Game2048 = () => {
           // Check for win
           if (row[j] === 2048) {
             setGameWon(true);
+            
+            // Update game progress when 2048 is reached
+            if (user) {
+              updateGameProgress(user.username, '2048', {
+                completed: true,
+                score: newScore,
+                lastPlayed: new Date().toISOString(),
+              });
+            }
           }
         }
       }
@@ -73,12 +86,20 @@ const Game2048 = () => {
         newBoard[i][j] = row[j];
       }
     }
-
+    
     if (moved) {
       addRandomTile(newBoard);
       setScore(newScore);
+            
+      // Update game progress
+      if (user) {
+        updateGameProgress(user.username, '2048', {
+          score: newScore,
+          lastPlayed: new Date().toISOString(),
+        });
+      }
     }
-
+    
     return newBoard;
   };
 
@@ -129,7 +150,20 @@ const Game2048 = () => {
     
     // Check for game over
     if (isGameOver(newBoard)) {
-      setGameOver(true);
+      handleGameOver(score); // Use current score instead of newScore
+    }
+  };
+
+  const handleGameOver = (finalScore: number) => {
+    setGameOver(true);
+    
+    // Update game progress when game ends
+    if (user) {
+      updateGameProgress(user.username, '2048', {
+        completed: false, // Game ended without reaching 2048
+        score: finalScore,
+        lastPlayed: new Date().toISOString(),
+      });
     }
   };
 
@@ -289,6 +323,81 @@ const Game2048 = () => {
               ))}
             </div>
           ))}
+        </div>
+
+        {/* Mobile Controls */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridTemplateRows: 'repeat(3, 1fr)', gap: '5px', width: '150px', height: '150px' }}>
+          <div></div>
+          <button 
+            className="ps5-button" 
+            onClick={() => {
+              if (!gameOver) {
+                const newBoard = moveUp(board);
+                setBoard(newBoard);
+                if (isGameOver(newBoard)) {
+                  setGameOver(true);
+                }
+              }
+            }}
+            style={{ gridColumn: '2', gridRow: '1', borderRadius: '5px' }}
+            aria-label="Move Up"
+          >
+            ↑
+          </button>
+          <div></div>
+          
+          <button 
+            className="ps5-button" 
+            onClick={() => {
+              if (!gameOver) {
+                const newBoard = moveLeft(board);
+                setBoard(newBoard);
+                if (isGameOver(newBoard)) {
+                  setGameOver(true);
+                }
+              }
+            }}
+            style={{ gridColumn: '1', gridRow: '2', borderRadius: '5px' }}
+            aria-label="Move Left"
+          >
+            ←
+          </button>
+          <div style={{ gridColumn: '2', gridRow: '2' }}></div>
+          <button 
+            className="ps5-button" 
+            onClick={() => {
+              if (!gameOver) {
+                const newBoard = moveRight(board);
+                setBoard(newBoard);
+                if (isGameOver(newBoard)) {
+                  setGameOver(true);
+                }
+              }
+            }}
+            style={{ gridColumn: '3', gridRow: '2', borderRadius: '5px' }}
+            aria-label="Move Right"
+          >
+            →
+          </button>
+          
+          <div></div>
+          <button 
+            className="ps5-button" 
+            onClick={() => {
+              if (!gameOver) {
+                const newBoard = moveDown(board);
+                setBoard(newBoard);
+                if (isGameOver(newBoard)) {
+                  setGameOver(true);
+                }
+              }
+            }}
+            style={{ gridColumn: '2', gridRow: '3', borderRadius: '5px' }}
+            aria-label="Move Down"
+          >
+            ↓
+          </button>
+          <div></div>
         </div>
 
         {/* Instructions */}

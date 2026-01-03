@@ -308,13 +308,13 @@ const ShapeBreakerGame: React.FC = () => {
             <div className="sb-panel">
               <h3 className="sb-panel-title">Controls</h3>
               <div className="sb-controls-grid">
-                <button className="sb-btn" onClick={() => rotate()}><FaRedo /></button>
-                <button className="sb-btn" onClick={() => moveDown()}><FaArrowDown /></button>
+                <button className="sb-btn" onClick={() => rotate()}>↻</button>
+                <button className="sb-btn" onClick={() => moveDown()}>↓</button>
                 <button className="sb-btn" onClick={() => drop()}><span style={{fontWeight:'bold'}}>SPACE</span></button>
-                <button className="sb-btn" onClick={() => moveHorizontal(-1)}><FaArrowLeft /></button>
-                <button className="sb-btn" onClick={() => setIsPaused(!isPaused)}>{isPaused ? <FaPlay /> : <FaPause />}</button>
-                <button className="sb-btn" onClick={() => moveHorizontal(1)}><FaArrowRight /></button>
-                <button className="sb-btn sb-btn-wide" onClick={initGame}><FaSync /> Restart</button>
+                <button className="sb-btn" onClick={() => moveHorizontal(-1)}>←</button>
+                <button className="sb-btn" onClick={() => setIsPaused(!isPaused)}>{isPaused ? '▶' : '⏸'}</button>
+                <button className="sb-btn" onClick={() => moveHorizontal(1)}>→</button>
+                <button className="sb-btn sb-btn-wide" onClick={initGame}>↺ Restart</button>
               </div>
             </div>
             

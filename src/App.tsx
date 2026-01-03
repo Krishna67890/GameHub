@@ -8,6 +8,8 @@ import Home from './pages/Home';
 import GameMode from './pages/GameMode';
 import LeaderBoard from './pages/LeaderBoard';
 import Settings from './pages/Settings';
+import Login from './pages/Login';
+import Tasks from './pages/Tasks';
 import GameLoader from './components/GameLoader';
 import Game2048 from './games/2048/2048Game';
 import CandyCrushGame from './games/candy-crush/CandyCrushGame';
@@ -22,13 +24,16 @@ import TicTacToeGame from './games/tic-tac-toe/TicTacToeGame';
 import BubbleShooterGame from './games/bubble-shooter/BubbleShooterGame';
 import PollGame from './games/poll/PollGame';
 import WackAMoleGame from './games/wack-a-mole/WackAMoleGame';
+import WordleGame from './games/wordle/WordleGame';
 import MazeGame from './games/maze/MazeGame'; // Corrected import
 import HangmanGame from './games/hangman/HangmanGame';
 import CarromGame from './games/carrom/CarromGame';
 import TrollLaunchGame from './games/troll-launch/TrollLaunchGame';
+import BalloonGoesUpGame from './games/Ball-Goes-Up/BalloonGoesUpGame';
 import CricketGame from './games/cricket/CricketGame';
 import SnakeGame from './games/snake/SnakeGame';
 import KhoKhoGame from './games/kho-kho/KhoKhoGame';
+import PongGame from './games/pong/PongGame';
 import './styles/ps5-theme.css';
 
 const App = () => {
@@ -54,15 +59,20 @@ const App = () => {
                 <Route path="/games/bubble-shooter" element={<BubbleShooterGame />} />
                 <Route path="/games/poll" element={<PollGame />} />
                 <Route path="/games/wack-a-mole" element={<WackAMoleGame />} />
+                <Route path="/games/wordle" element={<WordleGame />} />
                 <Route path="/games/maze" element={<MazeGame />} /> {/* Corrected component */}
                 <Route path="/games/hangman" element={<HangmanGame />} />
                 <Route path="/games/carrom" element={<CarromGame />} />
                 <Route path="/games/troll-launch" element={<TrollLaunchGame />} />
+                <Route path="/games/balloon-goes-up" element={<BalloonGoesUpGame />} />
                 <Route path="/games/cricket" element={<CricketGame />} />
                 <Route path="/games/snake" element={<SnakeGame />} />
                 <Route path="/games/kho-kho" element={<KhoKhoGame />} />
+                                <Route path="/games/pong" element={<PongGame />} />
                 <Route path="/game/:gameId" element={<GameLoader />} />
+                <Route path="/login" element={<Login />} />
                 <Route path="/leaderboard" element={<LeaderBoard />} />
+                <Route path="/tasks" element={<Tasks />} />
                 <Route path="/settings" element={<Settings />} />
               </Routes>
             </MainLayout>

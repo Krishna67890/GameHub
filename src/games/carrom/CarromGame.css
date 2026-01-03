@@ -1,74 +1,282 @@
+/* Carrom Game Styles */
 .carrom-game-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    width: 100%;
-    height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 #carrom-board {
-    width: 600px;
-    height: 600px;
-    background-color: #f7dE9A;
-    border-radius: 50%;
-    position: relative;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
-    border: 20px solid #5D2906;
+  position: relative;
+  width: 600px;
+  height: 600px;
+  background: linear-gradient(135deg, #8B4513, #A0522D);
+  border: 15px solid #5D4037;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  margin: 20px auto;
+  cursor: pointer;
 }
 
+/* Carrom board markings */
 .center-circle {
-    position: absolute;
-    width: 80px;
-    height: 80px;
-    background-color: #e74c3c;
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border: 2px solid white;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  border: 2px solid white;
+  border-radius: 50%;
+}
+
+.d-line {
+  position: absolute;
+  width: 200px;
+  height: 2px;
+  background: white;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.baselines {
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: white;
+  left: 0;
+}
+
+.baselines.top {
+  top: 100px;
+}
+
+.baselines.bottom {
+  bottom: 100px;
 }
 
 .pocket {
-    position: absolute;
-    width: 60px;
-    height: 60px;
-    background-color: #111;
-    border-radius: 50%;
-    box-shadow: inset 0 0 10px #000;
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: black;
+  border-radius: 50%;
+  z-index: 1;
 }
 
-#pocket1 { top: 0; left: 0; }
-#pocket2 { top: 0; right: 0; }
-#pocket3 { bottom: 0; left: 0; }
-#pocket4 { bottom: 0; right: 0; }
+#pocket1 {
+  top: 10px;
+  left: 10px;
+}
 
-.striker {
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    background: radial-gradient(circle, #fff, #ddd);
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-    border: 2px solid #333;
+#pocket2 {
+  top: 10px;
+  right: 10px;
+}
+
+#pocket3 {
+  bottom: 10px;
+  left: 10px;
+}
+
+#pocket4 {
+  bottom: 10px;
+  right: 10px;
 }
 
 .coin {
-    position: absolute;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid white;
+  z-index: 8;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  cursor: default;
 }
 
-.white-coin { background-color: #f1f1f1; border: 1px solid #ccc; }
-.black-coin { background-color: #333; border: 1px solid #000; }
-.red-coin { 
-    background-color: #c0392b; 
-    border: 1px solid #a03021;
-    width: 32px;
-    height: 32px;
+.coin.white-coin {
+  background: radial-gradient(circle, #ffffff, #cccccc);
+}
+
+.coin.black-coin {
+  background: radial-gradient(circle, #333333, #000000);
+}
+
+.coin.red-coin {
+  background: radial-gradient(circle, #ff0000, #cc0000);
+}
+
+.striker {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: radial-gradient(circle, #FFD700, #B8860B);
+  border-radius: 50%;
+  border: 2px solid #B8860B;
+  z-index: 10;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+  cursor: pointer;
+}
+
+.aim-line {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.7);
+  transform-origin: top left;
+  z-index: 5;
+  cursor: default;
+}
+
+/* Bubble Shooter Styles */
+.bubble-shooter-board {
+  background: linear-gradient(135deg, #1A237E, #311B92);
+  position: relative;
+  border: 4px solid var(--ps5-accent-blue);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.bubble-shooter-bubble {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid white;
+  z-index: 2;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.bubble-shooter-shooter {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+}
+
+.bubble-shooter-cannon {
+  position: absolute;
+  width: 10px;
+  height: 40px;
+  background: #FFD700;
+  transform-origin: bottom center;
+  z-index: 4;
+}
+
+/* Poll Game Styles */
+.poll-option {
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.poll-option:hover {
+  background: rgba(0, 247, 255, 0.2);
+  border-color: var(--ps5-accent-blue);
+}
+
+.poll-option.selected {
+  background: var(--ps5-accent-blue);
+  border-color: var(--ps5-accent-blue);
+}
+
+.poll-result-bar {
+  height: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.poll-result-fill {
+  height: 100%;
+  background: var(--ps5-accent-blue);
+  transition: width 0.5s ease;
+  position: relative;
+}
+
+.poll-result-text {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;
+  font-size: 0.8rem;
+}
+
+/* Common Styles */
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  height: 100%;
+  padding: 20px;
+}
+
+.ps5-card {
+  background: linear-gradient(135deg, #2e3d49, #1a1a2e);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--ps5-accent-blue);
+  color: white;
+}
+
+.ps5-button {
+  background: linear-gradient(135deg, #2e3d49, #1a1a2e);
+  border: 2px solid var(--ps5-accent-blue);
+  border-radius: 10px;
+  padding: 12px 24px;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.ps5-button:hover {
+  background: linear-gradient(135deg, #00f7ff, #0077ff);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 247, 255, 0.4);
+}
+
+.ps5-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.ps5-input {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid var(--ps5-accent-blue);
+  border-radius: 10px;
+  padding: 12px;
+  color: white;
+  font-size: 1rem;
+}
+
+.ps5-input:focus {
+  outline: none;
+  border-color: #00f7ff;
+  box-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
 }

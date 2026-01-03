@@ -38,20 +38,27 @@ const Home: React.FC = () => {
   }, []);
 
   const games = [
-    { id: '2048', name: '2048', icon: '🎮', path: '/games/2048' },
+    { id: '2048', name: '2048', icon: '🔢', path: '/games/2048' },
     { id: 'archery', name: 'Archery', icon: '🏹', path: '/games/archery' },
+    { id: 'balloon-goes-up', name: 'Balloon Goes Up', icon: '🎈', path: '/games/balloon-goes-up' },
+    { id: 'bubble-shooter', name: 'Bubble Shooter', icon: '💥', path: '/games/bubble-shooter' },
     { id: 'candy-crush', name: 'Candy Crush', icon: '🍭', path: '/games/candy-crush' },
+    { id: 'carrom', name: 'Carrom', icon: '🟊', path: '/games/carrom' },
     { id: 'cricket', name: 'Cricket', icon: '🏏', path: '/games/cricket' },
     { id: 'flappy-bird', name: 'Flappy Bird', icon: '🐦', path: '/games/flappy-bird' },
+    { id: 'hangman', name: 'Hangman', icon: '🤔', path: '/games/hangman' },
     { id: 'kho-kho', name: 'Kho Kho', icon: '🏃', path: '/games/kho-kho' },
     { id: 'maze', name: 'Maze', icon: '🧭', path: '/games/maze' },
     { id: 'memory-card', name: 'Memory Card', icon: '🃏', path: '/games/memory-card' },
+    { id: 'poll', name: 'Poll Game', icon: '📊', path: '/games/poll' },
+        { id: 'pong', name: 'Pong', icon: '🏓', path: '/games/pong' },
     { id: 'rock-paper-scissors', name: 'Rock Paper Scissors', icon: '✌️', path: '/games/rock-paper-scissors' },
     { id: 'shape-breaker', name: 'Shape Breaker', icon: '🧱', path: '/games/shape-breaker' },
     { id: 'snake', name: 'Snake', icon: '🐍', path: '/games/snake' },
     { id: 'stick-hero', name: 'Stick Hero', icon: '🦸', path: '/games/stick-hero' },
     { id: 'sudoku', name: 'Sudoku', icon: '🧩', path: '/games/sudoku' },
     { id: 'tic-tac-toe', name: 'Tic Tac Toe', icon: '❌', path: '/games/tic-tac-toe' },
+    { id: 'troll-launch', name: 'Troll Launch', icon: '🧌', path: '/games/troll-launch' },
     { id: 'wack-a-mole', name: 'Wack A Mole', icon: '🐹', path: '/games/wack-a-mole' },
     { id: 'wordle', name: 'Wordle', icon: '🔤', path: '/games/wordle' },
   ];
@@ -67,7 +74,7 @@ const Home: React.FC = () => {
   return (
     <div className="ps5-container" ref={homeRef}>
       <div className="ps5-header" ref={headerRef}>
-        <h1 className="ps5-title">🎮 PLAYSTATION 5</h1>
+        <h1 className="ps5-title">🎮 GameHub</h1>
         <p className="ps5-subtitle">Game Library - Select a game to start playing</p>
       </div>
       
@@ -93,7 +100,7 @@ const Home: React.FC = () => {
         fontSize: '14px'
       }}>
         <p>🎮 Use your controller or mouse to navigate</p>
-        <p>⚡ Experience the power of PS5 gaming</p>
+        <p>⚡ Experience the power of GameHub</p>
       </div>
     </div>
   );

@@ -1,117 +1,221 @@
-import React, { useState } from "react";
-import { useTheme } from "../components/context/ThemeContext";
-import "../styles/ps5-theme.css";
+import React, { useState } from 'react';
+import { useAuth } from '../components/context/AuthContext';
+import { useTheme } from '../components/context/ThemeContext';
+import '../styles/ps5-theme.css';
 
 const Settings = () => {
+  const { user, isAuthenticated, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const [settings, setSettings] = useState({
-    sound: true,
-    music: true,
-    notifications: true,
-    difficulty: "medium",
-  });
+  const [newUsername, setNewUsername] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [message, setMessage] = useState('');
 
-  const handleSettingChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
+  const handleUpdateProfile = (e: React.FormEvent) => {
+    e.preventDefault();
     
-    setSettings(prev => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value
-    }));
+    if (!isAuthenticated || !user) {
+      setMessage('You must be logged in to update profile');
+      return;
+    }
+    
+    if (newPassword && newPassword !== confirmPassword) {
+      setMessage('Passwords do not match');
+      return;
+    }
+    
+    // Update user info in localStorage
+    const updatedUser = {
+      ...user,
+      username: newUsername || user.username,
+    };
+    
+    localStorage.setItem('demoUser', JSON.stringify(updatedUser));
+    
+    // Update password if provided
+    if (newPassword) {
+      localStorage.setItem('demoPassword', newPassword);
+    }
+    
+    // Update context state would require adding update function to auth context
+    setMessage('Profile updated successfully!');
+    setNewUsername('');
+    setNewPassword('');
+    setConfirmPassword('');
+  };
+
+  const handleDeleteAccount = () => {
+    if (window.confirm('Are you sure you want to delete your demo account? This cannot be undone.')) {
+      localStorage.removeItem('demoUser');
+      logout();
+      setMessage('Account deleted successfully');
+    }
   };
 
   return (
-    <div className="ps5-container">
+    <div className="ps5-container" style={{ padding: '20px' }}>
       <div className="ps5-header">
         <h1 className="ps5-title">⚙️ Settings</h1>
-        <p className="ps5-subtitle">Customize your gaming experience</p>
+        <p className="ps5-subtitle">Manage your demo account settings</p>
       </div>
 
-      <div className="ps5-card" style={{ maxWidth: "600px", margin: "0 auto" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-          {/* Theme Toggle */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "15px 0" }}>
-            <span>Dark Mode</span>
+      <div className="ps5-card" style={{ maxWidth: '600px', margin: '0 auto', padding: '30px' }}>
+        {isAuthenticated && user ? (
+          <div>
+            <h2 style={{ color: 'var(--ps5-accent-blue)', marginBottom: '20px' }}>Your Account</h2>
+            
+            <div style={{ marginBottom: '20px' }}>
+              <p style={{ color: 'white', marginBottom: '5px' }}><strong>Current Username:</strong> {user.username}</p>
+              <p style={{ color: 'white', marginBottom: '5px' }}><strong>Account Created:</strong> {new Date(user.joinDate).toLocaleDateString()}</p>
+            </div>
+
+            <form onSubmit={handleUpdateProfile}>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', color: 'white', marginBottom: '5px' }}>
+                  New Username (leave blank to keep current)
+                </label>
+                <input
+                  type="text"
+                  value={newUsername}
+                  onChange={(e) => setNewUsername(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid var(--ps5-accent-blue)',
+                    borderRadius: '8px',
+                    color: 'white',
+                    fontSize: '16px'
+                  }}
+                  placeholder={user.username}
+                />
+              </div>
+
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', color: 'var(--ps5-light-text)', marginBottom: '5px' }}>
+                  New Password (leave blank to keep current)
+                </label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid var(--ps5-accent-blue)',
+                    borderRadius: '8px',
+                    color: 'var(--ps5-light-text)',
+                    fontSize: '16px'
+                  }}
+                  placeholder="New password"
+                />
+              </div>
+
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', color: 'white', marginBottom: '5px' }}>
+                  Confirm New Password
+                </label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid var(--ps5-accent-blue)',
+                    borderRadius: '8px',
+                    color: 'white',
+                    fontSize: '16px'
+                  }}
+                  placeholder="Confirm new password"
+                />
+              </div>
+
+              <button type="submit" className="ps5-button" style={{ width: '100%', marginBottom: '15px' }}>
+                Update Profile
+              </button>
+            </form>
+
+            <div style={{ marginBottom: '20px' }}>
+              <h3 style={{ color: 'var(--ps5-accent-blue)', marginBottom: '10px' }}>Theme Settings</h3>
+              <div className="theme-toggle" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <span style={{ color: 'var(--ps5-light-text)' }}>Dark Mode</span>
+                <button 
+                  onClick={toggleTheme}
+                  className="ps5-button"
+                  style={{ 
+                    padding: '8px 12px', 
+                    fontSize: '16px',
+                    minWidth: 'auto',
+                    width: '40px',
+                    height: '40px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid var(--ps5-accent-blue)'
+                  }}
+                  title="Toggle theme"
+                >
+                  {theme === 'dark' ? '☀️' : '🌙'}
+                </button>
+                <span style={{ color: 'var(--ps5-light-text)' }}>Light Mode</span>
+              </div>
+            </div>
+
             <button 
+              onClick={handleDeleteAccount}
               className="ps5-button"
-              onClick={toggleTheme}
-              style={{ minWidth: "auto", padding: "8px 16px" }}
+              style={{ 
+                width: '100%', 
+                backgroundColor: '#ff4757',
+                marginBottom: '15px'
+              }}
             >
-              {theme}
+              Delete Account
+            </button>
+
+            <button 
+              onClick={logout}
+              className="ps5-button"
+              style={{ 
+                width: '100%',
+                backgroundColor: '#ffa502'
+              }}
+            >
+              Logout
             </button>
           </div>
-
-          {/* Sound Settings */}
-          <div style={{ padding: "15px 0", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-            <h3 style={{ margin: "0 0 15px 0", color: "var(--ps5-accent-blue)" }}>Audio Settings</h3>
-            
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-              <span>Sound Effects</span>
-              <input
-                type="checkbox"
-                name="sound"
-                checked={settings.sound}
-                onChange={handleSettingChange}
-                style={{ transform: "scale(1.2)" }}
-              />
-            </div>
-            
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-              <span>Background Music</span>
-              <input
-                type="checkbox"
-                name="music"
-                checked={settings.music}
-                onChange={handleSettingChange}
-                style={{ transform: "scale(1.2)" }}
-              />
-            </div>
-          </div>
-
-          {/* Notification Settings */}
-          <div style={{ padding: "15px 0", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-            <h3 style={{ margin: "0 0 15px 0", color: "var(--ps5-accent-blue)" }}>Notification Settings</h3>
-            
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span>Enable Notifications</span>
-              <input
-                type="checkbox"
-                name="notifications"
-                checked={settings.notifications}
-                onChange={handleSettingChange}
-                style={{ transform: "scale(1.2)" }}
-              />
-            </div>
-          </div>
-
-          {/* Difficulty Settings */}
-          <div style={{ padding: "15px 0" }}>
-            <h3 style={{ margin: "0 0 15px 0", color: "var(--ps5-accent-blue)" }}>Game Difficulty</h3>
-            
-            <select
-              name="difficulty"
-              value={settings.difficulty}
-              onChange={handleSettingChange}
+        ) : (
+          <div>
+            <h2 style={{ color: 'var(--ps5-accent-blue)', marginBottom: '20px' }}>Demo Account Settings</h2>
+            <p style={{ color: 'white', marginBottom: '20px' }}>
+              You are not currently logged in. Please create a demo account first.
+            </p>
+            <button 
               className="ps5-button"
-              style={{ width: "100%", padding: "12px", textAlign: "center" }}
+              onClick={() => window.location.href = '/login'}
+              style={{ width: '100%' }}
             >
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
-              <option value="expert">Expert</option>
-            </select>
+              Create Demo Account
+            </button>
           </div>
-        </div>
-      </div>
+        )}
 
-      <div style={{ textAlign: "center", padding: "30px" }}>
-        <button 
-          className="ps5-button ps5-button--success"
-          style={{ minWidth: "200px" }}
-        >
-          Save Settings
-        </button>
+        {message && (
+          <div style={{ 
+            marginTop: '15px', 
+            padding: '10px', 
+            backgroundColor: message.includes('successfully') ? 'rgba(46, 204, 113, 0.2)' : 'rgba(231, 76, 60, 0.2)',
+            border: message.includes('successfully') ? '1px solid #2ecc71' : '1px solid #e74c3c',
+            borderRadius: '5px',
+            color: message.includes('successfully') ? '#2ecc71' : '#e74c3c'
+          }}>
+            {message}
+          </div>
+        )}
       </div>
     </div>
   );

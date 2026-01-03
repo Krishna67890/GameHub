@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaSync, FaArrowUp, FaBullseye, FaWind } from 'react-icons/fa';
 import PS5GameWrapper from '../../components/PS5GameWrapper';
+import { useGame } from '../../components/context/GameContext';
+import { useAuth } from '../../components/context/AuthContext';
 import '../../styles/ps5-theme.css';
 
 interface Target {
@@ -22,17 +23,11 @@ interface Arrow {
   speedY: number;
 }
 
-interface Obstacle {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
-const ArcheryGame: React.FC = () => {
+const ArcheryGame = () => {
+  const { user } = useAuth();
+  const { updateGameProgress } = useGame();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const dragHandleRef = useRef<HTMLDivElement>(null);
   
   const [gameState, setGameState] = useState({
     level: 1,
@@ -60,7 +55,6 @@ const ArcheryGame: React.FC = () => {
   // Game objects refs to avoid re-renders
   const targetsRef = useRef<Target[]>([]);
   const arrowsRef = useRef<Arrow[]>([]);
-  const obstaclesRef = useRef<Obstacle[]>([]);
   const bowPosRef = useRef({ x: 80, y: 0 });
   const animationFrameRef = useRef<number>();
   
@@ -113,7 +107,6 @@ const ArcheryGame: React.FC = () => {
     const height = canvasRef.current.height;
     
     targetsRef.current = [];
-    obstaclesRef.current = [];
     arrowsRef.current = [];
     
     // Targets
@@ -130,19 +123,6 @@ const ArcheryGame: React.FC = () => {
         speedY: level > 2 ? (Math.random() - 0.5) * 2 : 0,
         type: Math.random() > 0.8 ? 'bonus' : 'normal'
       });
-    }
-    
-    // Obstacles
-    if (level > 3) {
-      const numObstacles = Math.min(Math.floor(level / 3), 8);
-      for (let i = 0; i < numObstacles; i++) {
-        obstaclesRef.current.push({
-          x: 250 + Math.random() * (width - 350),
-          y: 80 + Math.random() * (height - 180),
-          width: 20 + Math.random() * 40,
-          height: 20 + Math.random() * 40
-        });
-      }
     }
     
     // Wind
@@ -172,6 +152,16 @@ const ArcheryGame: React.FC = () => {
       streak: 0,
       multiplier: 1
     }));
+    
+    // Update game progress
+    if (user) {
+      updateGameProgress(user.username, 'Archery', {
+        score: 0,
+        level: 1,
+        lastPlayed: new Date().toISOString(),
+      });
+    }
+    
     generateLevel(1);
     gameLoop();
   };
@@ -232,20 +222,6 @@ const ArcheryGame: React.FC = () => {
       ctx.fillStyle = '#FFFFFF'; ctx.fill();
     });
     
-    // Draw obstacles
-    ctx.fillStyle = '#8B4513';
-    obstaclesRef.current.forEach(obs => {
-      ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
-      ctx.strokeStyle = '#5D4037';
-      ctx.lineWidth = 1;
-      for (let i = 0; i < obs.width; i += 5) {
-        ctx.beginPath();
-        ctx.moveTo(obs.x + i, obs.y);
-        ctx.lineTo(obs.x + i, obs.y + obs.height);
-        ctx.stroke();
-      }
-    });
-    
     // Update and draw arrows
     for (let i = arrowsRef.current.length - 1; i >= 0; i--) {
       const arrow = arrowsRef.current[i];
@@ -256,6 +232,14 @@ const ArcheryGame: React.FC = () => {
       arrow.x += arrow.speedX;
       arrow.y += arrow.speedY;
       
+      // Draw Arrow Trail
+      ctx.beginPath();
+      ctx.moveTo(arrow.x - arrow.speedX * 0.5, arrow.y - arrow.speedY * 0.5);
+      ctx.lineTo(arrow.x, arrow.y);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      
       // Draw Arrow
       ctx.save();
       ctx.translate(arrow.x, arrow.y);
@@ -263,13 +247,24 @@ const ArcheryGame: React.FC = () => {
       
       // Shaft
       ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-20, 0);
-      ctx.strokeStyle = '#8B4513'; ctx.lineWidth = 3; ctx.stroke();
-      // Head
-      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-5, -3); ctx.lineTo(-5, 3); ctx.closePath();
-      ctx.fillStyle = '#C0C0C0'; ctx.fill();
+      ctx.strokeStyle = '#8B4513'; ctx.lineWidth = 4; ctx.stroke();
+      
+      // Arrow head
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-6, -4); ctx.lineTo(-6, 4); ctx.closePath();
+      ctx.fillStyle = '#C0C0C0'; // Silver color for arrowhead
+      ctx.fill();
+      ctx.strokeStyle = '#A0A0A0';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      
       // Fletching
-      ctx.beginPath(); ctx.moveTo(-20, 0); ctx.lineTo(-25, -5); ctx.lineTo(-25, 5); ctx.closePath();
-      ctx.fillStyle = '#FFFFFF'; ctx.fill();
+      ctx.beginPath(); ctx.moveTo(-20, 0); ctx.lineTo(-28, -6); ctx.lineTo(-24, 0); ctx.lineTo(-28, 6); ctx.closePath();
+      ctx.fillStyle = '#FFD700'; // Gold color for fletching
+      ctx.fill();
+      ctx.strokeStyle = '#DAA520';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      
       ctx.restore();
       
       // Collision detection
@@ -305,6 +300,16 @@ const ArcheryGame: React.FC = () => {
               // Check Bullseye
               if (dist < target.radius * 0.2) {
                  showAchievement('Bullseye!', `+${10 * newMult} Bonus`);
+                 
+                 // Update game progress
+                 if (user) {
+                   updateGameProgress(user.username, 'Archery', {
+                     score: prev.score + totalPoints + (10 * newMult),
+                     level: prev.level,
+                     lastPlayed: new Date().toISOString(),
+                   });
+                 }
+                 
                  return {
                    ...prev,
                    score: prev.score + totalPoints + (10 * newMult),
@@ -312,6 +317,15 @@ const ArcheryGame: React.FC = () => {
                    streak: newStreak,
                    multiplier: newMult
                  };
+              }
+              
+              // Update game progress
+              if (user) {
+                updateGameProgress(user.username, 'Archery', {
+                  score: prev.score + totalPoints,
+                  level: prev.level,
+                  lastPlayed: new Date().toISOString(),
+                });
               }
               
               return {
@@ -327,18 +341,6 @@ const ArcheryGame: React.FC = () => {
           }
         }
       });
-      
-      // Obstacles
-      if (!hit) {
-        obstaclesRef.current.forEach(obs => {
-          if (arrow.x > obs.x && arrow.x < obs.x + obs.width &&
-              arrow.y > obs.y && arrow.y < obs.y + obs.height) {
-            hit = true;
-            createHitEffect(arrow.x, arrow.y);
-            setGameState(prev => ({ ...prev, streak: 0, multiplier: 1 }));
-          }
-        });
-      }
       
       // Bounds
       if (arrow.x < 0 || arrow.x > width || arrow.y < 0 || arrow.y > height || hit) {
@@ -404,8 +406,27 @@ const ArcheryGame: React.FC = () => {
     } else if (gameState.arrows <= 0 && arrowsRef.current.length === 0 && !gameState.isGameOver) {
       if (!targetsRef.current.every(t => t.hit)) {
         setGameState(prev => ({ ...prev, isGameOver: true }));
+        
+        // Update game progress when game over
+        if (user) {
+          updateGameProgress(user.username, 'Archery', {
+            score: gameState.score,
+            level: gameState.level,
+            lastPlayed: new Date().toISOString(),
+          });
+        }
+        
         if (gameState.score > gameState.highScore) {
           localStorage.setItem('archeryMasterHighScore', gameState.score.toString());
+              
+          // Update high score progress
+          if (user) {
+            updateGameProgress(user.username, 'Archery', {
+              score: gameState.score,
+              level: gameState.level,
+              lastPlayed: new Date().toISOString(),
+            });
+          }
         }
       }
     }
@@ -422,6 +443,16 @@ const ArcheryGame: React.FC = () => {
       score: prev.score + (prev.level * 25) 
     }));
     
+    // Update game progress
+    if (user) {
+      updateGameProgress(user.username, 'Archery', {
+        score: gameState.score + (gameState.level * 25),
+        level: gameState.level + 1, // Next level
+        completed: true,
+        lastPlayed: new Date().toISOString(),
+      });
+    }
+    
     setTimeout(() => {
       setShowLevelUp(false);
       setGameState(prev => {
@@ -429,22 +460,112 @@ const ArcheryGame: React.FC = () => {
         generateLevel(nextLevel);
         return { ...prev, level: nextLevel, arrows: prev.arrows + 3 }; // Bonus arrows
       });
-      // Need to restart loop as it might have paused? Actually loop continues unless game over
     }, 2000);
   };
 
   const createHitEffect = (x: number, y: number) => {
-    const effect = document.createElement('div');
-    effect.className = 'ag-hit-effect';
-    effect.style.left = `${x - 30}px`;
-    effect.style.top = `${y - 30}px`;
-    containerRef.current?.appendChild(effect);
-    setTimeout(() => effect.remove(), 500);
+    // Create a canvas-based effect instead of DOM element for better performance
+    if (!canvasRef.current) return;
+    const ctx = canvasRef.current.getContext('2d');
+    if (!ctx) return;
+    
+    // Draw explosion effect
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    
+    for (let i = 0; i < 10; i++) {
+      const angle = (i / 10) * Math.PI * 2;
+      const length = 15 + Math.random() * 10;
+      const x1 = x + Math.cos(angle) * 3;
+      const y1 = y + Math.sin(angle) * 3;
+      const x2 = x + Math.cos(angle) * length;
+      const y2 = y + Math.sin(angle) * length;
+      
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = `rgba(255, ${Math.floor(100 + Math.random() * 155)}, 0, ${0.8 + Math.random() * 0.2})`;
+      ctx.lineWidth = 2 + Math.random() * 2;
+      ctx.stroke();
+    }
+    
+    ctx.restore();
   };
 
   const showAchievement = (title: string, text: string) => {
     setAchievement({ title, text });
     setTimeout(() => setAchievement(null), 2000);
+  };
+  
+  const handleAim = (direction: 'up' | 'down' | 'left' | 'right') => {
+    if (gameState.arrows <= 0) return;
+    
+    // Calculate new drag position based on direction
+    const moveDistance = 15;
+    const bowX = bowPosRef.current.x;
+    const bowY = bowPosRef.current.y;
+    
+    let newX = bowX;
+    let newY = bowY;
+    
+    if (direction === 'up') {
+      newY = Math.max(bowY - moveDistance, bowY - 100);
+    } else if (direction === 'down') {
+      newY = Math.min(bowY + moveDistance, bowY + 100);
+    } else if (direction === 'left') {
+      newX = Math.max(bowX - moveDistance, bowX - 100);
+    } else if (direction === 'right') {
+      newX = Math.min(bowX + moveDistance, bowX + 100);
+    }
+    
+    // Start dragging if not already dragging
+    if (!gameState.isDragging) {
+      setGameState(prev => ({
+        ...prev,
+        isDragging: true,
+        dragStart: { x: bowX, y: bowY },
+        dragCurrent: { x: newX, y: newY }
+      }));
+    } else {
+      // Update current drag position
+      setGameState(prev => ({
+        ...prev,
+        dragCurrent: { x: newX, y: newY }
+      }));
+    }
+  };
+  
+  const handleAimRelease = () => {
+    if (!gameState.isDragging) return;
+    
+    const dx = gameState.dragCurrent.x - bowPosRef.current.x;
+    const dy = gameState.dragCurrent.y - bowPosRef.current.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    
+    if (dist > 20 && gameState.arrows > 0) {
+      const pull = Math.min(dist / 100, 1);
+      const speed = 15 * pull * gameState.bowPower;
+      const angle = Math.atan2(dy, dx);
+      
+      arrowsRef.current.push({
+        x: bowPosRef.current.x,
+        y: bowPosRef.current.y,
+        speedX: Math.cos(angle) * speed,
+        speedY: Math.sin(angle) * speed
+      });
+      
+      setGameState(prev => {
+         // Reset streak on miss logic handled in loop
+         return {
+           ...prev,
+           isDragging: false,
+           arrows: prev.arrows - 1,
+           shotsFired: prev.shotsFired + 1
+         };
+      });
+    } else {
+      setGameState(prev => ({ ...prev, isDragging: false }));
+    }
   };
 
   // Input handlers
@@ -598,24 +719,9 @@ const ArcheryGame: React.FC = () => {
           </div>
         </div>
         
-        <div className="ag-game-container" ref={containerRef}>
-          <canvas ref={canvasRef} />
+        <div className="ag-game-container" ref={containerRef} style={{ width: '100%', height: '60vh', minHeight: '300px' }}>
+          <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
           
-          {/* Drag Handle UI */}
-          <div 
-            className="ag-drag-handle" 
-            ref={dragHandleRef}
-            onMouseDown={handleDragStart}
-            onTouchStart={handleDragStart}
-            style={{
-              left: gameState.isDragging ? `${gameState.dragCurrent.x - 20}px` : `${bowPosRef.current.x - 20}px`,
-              top: gameState.isDragging ? `${gameState.dragCurrent.y - 20}px` : `${bowPosRef.current.y - 20}px`,
-              cursor: gameState.isDragging ? 'grabbing' : 'grab',
-              position: 'absolute',
-              pointerEvents: 'auto'
-            }}
-          />
-
           {/* UI Overlay */}
           <div className="ag-ui-overlay">
             <div className="ag-stats-panel">
@@ -635,14 +741,62 @@ const ArcheryGame: React.FC = () => {
             
             <div className="ag-controls">
               <button className="ag-btn ps5-button" onClick={buyPower} disabled={gameState.score < 100}>
-                <FaBullseye /> Power (100)
+                Power (100)
               </button>
               <button className="ag-btn ps5-button" onClick={buyArrows} disabled={gameState.score < 50}>
-                <FaArrowUp /> Arrows (50)
+                Arrows (50)
               </button>
               <button className="ag-btn ps5-button" onClick={startGame}>
-                <FaSync /> Restart
+                Restart
               </button>
+            </div>
+            
+            {/* Mobile Arrow Controls */}
+            <div className="ag-mobile-controls">
+              <div className="ag-aim-controls">
+                <button 
+                  className="ag-aim-btn" 
+                  onTouchStart={(e) => { e.preventDefault(); handleAim('up'); }}
+                  onTouchEnd={(e) => { e.preventDefault(); handleAimRelease(); }}
+                  onMouseDown={() => handleAim('up')}
+                  onMouseUp={handleAimRelease}
+                  onMouseLeave={handleAimRelease}
+                >
+                  ↑
+                </button>
+                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                  <button 
+                    className="ag-aim-btn" 
+                    onTouchStart={(e) => { e.preventDefault(); handleAim('left'); }}
+                    onTouchEnd={(e) => { e.preventDefault(); handleAimRelease(); }}
+                    onMouseDown={() => handleAim('left')}
+                    onMouseUp={handleAimRelease}
+                    onMouseLeave={handleAimRelease}
+                  >
+                    ←
+                  </button>
+                  <button 
+                    className="ag-aim-btn" 
+                    onTouchStart={(e) => { e.preventDefault(); handleAim('right'); }}
+                    onTouchEnd={(e) => { e.preventDefault(); handleAimRelease(); }}
+                    onMouseDown={() => handleAim('right')}
+                    onMouseUp={handleAimRelease}
+                    onMouseLeave={handleAimRelease}
+                  >
+                    →
+                  </button>
+                </div>
+                <button 
+                  className="ag-aim-btn" 
+                  onTouchStart={(e) => { e.preventDefault(); handleAim('down'); }}
+                  onTouchEnd={(e) => { e.preventDefault(); handleAimRelease(); }}
+                  onMouseDown={() => handleAim('down')}
+                  onMouseUp={handleAimRelease}
+                  onMouseLeave={handleAimRelease}
+                >
+                  ↓
+                </button>
+              </div>
             </div>
           </div>
 
