@@ -8,7 +8,7 @@ interface User {
 interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
-  login: (username: string, password: string) => void;
+  login: (username: string, password: string) => boolean;
   logout: () => void;
   register: (username: string, password: string) => void;
 }
@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsAuthenticated(true);
   };
 
-  const login = (username: string, password: string) => {
+  const login = (username: string, password: string): boolean => {
     const storedUser = localStorage.getItem('demoUser');
     const storedPassword = localStorage.getItem('demoPassword');
     

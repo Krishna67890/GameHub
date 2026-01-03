@@ -7,7 +7,8 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { register } = useAuth();
+  const [isLoginMode, setIsLoginMode] = useState(true); // true for login, false for register
+  const { login, register } = useAuth();
   const navigate = useNavigate();
 
   const handleRegister = (e: React.FormEvent) => {
@@ -24,6 +25,35 @@ const Login = () => {
     
     // Navigate to home page after registration
     navigate('/');
+  };
+  
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Basic validation
+    if (!username.trim() || !password.trim()) {
+      setError('Please enter both username and password');
+      return;
+    }
+    
+    // Attempt to login
+    const loginSuccess = login(username.trim(), password.trim());
+    
+    if (loginSuccess) {
+      // Navigate to home page after successful login
+      navigate('/');
+    } else {
+      setError('Invalid username or password');
+    }
+  };
+  
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isLoginMode) {
+      handleLogin(e);
+    } else {
+      handleRegister(e);
+    }
   };
 
   return (
@@ -57,7 +87,7 @@ const Login = () => {
           </div>
         )}
         
-        <form onSubmit={handleRegister}>
+        <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '15px', textAlign: 'left' }}>
             <label style={{ display: 'block', color: 'white', marginBottom: '5px' }}>
               Username
@@ -110,9 +140,28 @@ const Login = () => {
               marginTop: '10px'
             }}
           >
-            Create Demo Account
+            {isLoginMode ? 'Login' : 'Create Demo Account'}
           </button>
         </form>
+        
+        <div style={{ marginTop: '15px', textAlign: 'center' }}>
+          <button 
+            type="button" 
+            onClick={() => setIsLoginMode(!isLoginMode)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--ps5-accent-blue)',
+              cursor: 'pointer',
+              fontSize: '14px',
+              textDecoration: 'underline'
+            }}
+          >
+            {isLoginMode 
+              ? 'Need an account? Register here' 
+              : 'Already have an account? Login here'}
+          </button>
+        </div>
         
         <div style={{ marginTop: '20px', color: '#ff6b6b', fontSize: '14px', textAlign: 'center' }}>
           <p><strong>Disclaimer:</strong> This is a demo account. Do not use your personal password. This site only stores names and passwords locally in your browser. No need to add strong passwords - weak passwords are fine since this is just for demo purposes.</p>

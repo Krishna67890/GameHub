@@ -1,6 +1,6 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './components/context/AuthContext';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './components/context/AuthContext';
 import { GameProvider } from './components/context/GameContext';
 import { ThemeProvider } from './components/context/ThemeContext';
 import MainLayout from './components/layout/MainLayout';
@@ -44,7 +44,8 @@ const App = () => {
           <GameProvider>
             <MainLayout>
               <Routes>
-                <Route path="/" element={<Home />} />
+                <Route path="/"><Route index element={<Navigate to="/login" replace />} /></Route>
+                <Route path="/home" element={<Home />} />
                 <Route path="/games" element={<GameMode />} />
                 <Route path="/games/2048" element={<Game2048 />} />
                 <Route path="/games/candy-crush" element={<CandyCrushGame />} />
