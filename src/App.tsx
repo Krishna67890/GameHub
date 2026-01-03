@@ -29,7 +29,7 @@ import MazeGame from './games/maze/MazeGame'; // Corrected import
 import HangmanGame from './games/hangman/HangmanGame';
 import CarromGame from './games/carrom/CarromGame';
 import TrollLaunchGame from './games/troll-launch/TrollLaunchGame';
-import BalloonGoesUpGame from './games/Ball-Goes-Up/BalloonGoesUpGame';
+import BalloonGoesUpGame from './games/Balloon-Goes-Up/BalloonGoesUpGame';
 import CricketGame from './games/cricket/CricketGame';
 import SnakeGame from './games/snake/SnakeGame';
 import KhoKhoGame from './games/kho-kho/KhoKhoGame';

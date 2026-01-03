@@ -1,0 +1,132 @@
+.balloon-goes-up-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  padding: 10px 0;
+}
+
+.score {
+  color: var(--ps5-accent-blue);
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.controls-info {
+  color: var(--ps5-light-text);
+  font-size: 1rem;
+  margin: 0;
+  text-align: right;
+}
+
+.game-canvas-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.game-canvas {
+  border: 3px solid var(--ps5-accent-blue);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5),
+              0 0 30px rgba(0, 247, 255, 0.2);
+  background: #16213e;
+}
+
+.game-over-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  color: white;
+  z-index: 10;
+}
+
+.game-over-overlay h2 {
+  font-size: 2rem;
+  color: var(--ps5-accent-blue);
+  margin-bottom: 10px;
+}
+
+.game-over-overlay p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.game-instructions {
+  background: var(--ps5-card-bg);
+  border: 2px solid var(--ps5-card-border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 10px;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.game-instructions p {
+  color: var(--ps5-light-text);
+  margin: 8px 0;
+  font-size: 16px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.game-instructions strong {
+  color: var(--ps5-accent-blue);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .balloon-goes-up-container {
+    padding: 10px;
+    gap: 15px;
+  }
+  
+  .game-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .score {
+    font-size: 1.2rem;
+  }
+  
+  .controls-info {
+    text-align: center;
+  }
+  
+  .game-canvas {
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .game-instructions {
+    padding: 15px;
+  }
+  
+  .game-instructions p {
+    font-size: 14px;
+  }
+}

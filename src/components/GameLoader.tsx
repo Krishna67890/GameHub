@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 const gameComponents: { [key: string]: React.LazyExoticComponent<React.ComponentType<any>> } = {
   '2048': lazy(() => import('../games/2048/2048Game')),
   'archery': lazy(() => import('../games/archery/ArcheryGame')),
-  'balloon-goes-up': lazy(() => import('../games/Ball-Goes-Up/BalloonGoesUpGame')),
+  'balloon-goes-up': lazy(() => import('../games/Balloon-Goes-Up/BalloonGoesUpGame')),
   'bubble-shooter': lazy(() => import('../games/bubble-shooter/BubbleShooterGame')),
   'candy-crush': lazy(() => import('../games/candy-crush/CandyCrushGame')),
   'carrom': lazy(() => import('../games/carrom/CarromGame')),
