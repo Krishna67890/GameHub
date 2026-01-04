@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import '../../styles/ps5-theme.css';
 
 const Footer = () => {
@@ -52,10 +53,11 @@ const Footer = () => {
               margin: 0,
               color: 'rgba(255, 255, 255, 0.7)'
             }}>
-              <li style={{ marginBottom: '5px' }}><a href="/" style={{ color: 'var(--ps5-accent-blue)', textDecoration: 'none' }}>Home</a></li>
-              <li style={{ marginBottom: '5px' }}><a href="/games" style={{ color: 'var(--ps5-accent-blue)', textDecoration: 'none' }}>Games</a></li>
-              <li style={{ marginBottom: '5px' }}><a href="/leaderboard" style={{ color: 'var(--ps5-accent-blue)', textDecoration: 'none' }}>Leaderboard</a></li>
-              <li><a href="/settings" style={{ color: 'var(--ps5-accent-blue)', textDecoration: 'none' }}>Settings</a></li>
+              <li style={{ marginBottom: '5px' }}><Link to="/home" style={{ color: 'var(--ps5-accent-blue)', textDecoration: 'none' }}>Home</Link></li>
+              <li style={{ marginBottom: '5px' }}><Link to="/games" style={{ color: 'var(--ps5-accent-blue)', textDecoration: 'none' }}>Games</Link></li>
+              <li style={{ marginBottom: '5px' }}><Link to="/leaderboard" style={{ color: 'var(--ps5-accent-blue)', textDecoration: 'none' }}>Leaderboard</Link></li>
+              <li style={{ marginBottom: '5px' }}><Link to="/external-games" style={{ color: 'var(--ps5-accent-blue)', textDecoration: 'none' }}>External Games</Link></li>
+              <li><Link to="/settings" style={{ color: 'var(--ps5-accent-blue)', textDecoration: 'none' }}>Settings</Link></li>
             </ul>
           </div>
         </div>

@@ -39,7 +39,7 @@ const Header = () => {
 
         <nav style={{ display: 'flex', gap: '20px' }}>
           <Link 
-            to="/" 
+            to="/home" 
             style={{ 
               color: 'white', 
               textDecoration: 'none',
@@ -146,6 +146,28 @@ const Header = () => {
             }}
           >
             Settings
+          </Link>
+          
+          <Link 
+            to="/external-games" 
+            style={{ 
+              color: 'white', 
+              textDecoration: 'none',
+              padding: '8px 16px',
+              borderRadius: '8px',
+              transition: 'background-color 0.3s',
+              border: '1px solid transparent'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(0, 247, 255, 0.1)';
+              e.currentTarget.style.borderColor = 'var(--ps5-accent-blue)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.borderColor = 'transparent';
+            }}
+          >
+            External Games
           </Link>
         </nav>
 

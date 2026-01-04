@@ -61,6 +61,7 @@ const Home: React.FC = () => {
     { id: 'troll-launch', name: 'Troll Launch', icon: '🧌', path: '/games/troll-launch' },
     { id: 'wack-a-mole', name: 'Wack A Mole', icon: '🐹', path: '/games/wack-a-mole' },
     { id: 'wordle', name: 'Wordle', icon: '🔤', path: '/games/wordle' },
+    { id: 'external', name: 'External Games', icon: '🌐', path: '/external-games' },
   ];
 
   const handleGameClick = (path: string) => {

@@ -7,6 +7,7 @@ import MainLayout from './components/layout/MainLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import GameMode from './pages/GameMode';
+import ExternalGames from './pages/ExternalGames';
 import LeaderBoard from './pages/LeaderBoard';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
@@ -57,6 +58,11 @@ const App = () => {
                 <Route path="/games" element={
                   <ProtectedRoute>
                     <GameMode />
+                  </ProtectedRoute>
+                } />
+                <Route path="/external-games" element={
+                  <ProtectedRoute>
+                    <ExternalGames />
                   </ProtectedRoute>
                 } />
                 <Route path="/games/2048" element={
