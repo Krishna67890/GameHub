@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './components/context/AuthContext';
 import { GameProvider } from './components/context/GameContext';
 import { ThemeProvider } from './components/context/ThemeContext';
 import MainLayout from './components/layout/MainLayout';
+import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import GameMode from './pages/GameMode';
 import LeaderBoard from './pages/LeaderBoard';
@@ -44,37 +45,155 @@ const App = () => {
           <GameProvider>
             <MainLayout>
               <Routes>
-                <Route path="/"><Route index element={<Navigate to="/login" replace />} /></Route>
-                <Route path="/home" element={<Home />} />
-                <Route path="/games" element={<GameMode />} />
-                <Route path="/games/2048" element={<Game2048 />} />
-                <Route path="/games/candy-crush" element={<CandyCrushGame />} />
-                <Route path="/games/flappy-bird" element={<FlappyBirdGame />} />
-                <Route path="/games/memory-card" element={<MemoryCardGame />} />
-                <Route path="/games/rock-paper-scissors" element={<RockPaperScissorsGame />} />
-                <Route path="/games/stick-hero" element={<StickHeroGame />} />
-                <Route path="/games/shape-breaker" element={<ShapeBreakerGame />} />
-                <Route path="/games/archery" element={<ArcheryGame />} />
-                <Route path="/games/sudoku" element={<SudokuGame />} />
-                <Route path="/games/tic-tac-toe" element={<TicTacToeGame />} />
-                <Route path="/games/bubble-shooter" element={<BubbleShooterGame />} />
-                <Route path="/games/poll" element={<PollGame />} />
-                <Route path="/games/wack-a-mole" element={<WackAMoleGame />} />
-                <Route path="/games/wordle" element={<WordleGame />} />
-                <Route path="/games/maze" element={<MazeGame />} /> {/* Corrected component */}
-                <Route path="/games/hangman" element={<HangmanGame />} />
-                <Route path="/games/carrom" element={<CarromGame />} />
-                <Route path="/games/troll-launch" element={<TrollLaunchGame />} />
-                <Route path="/games/balloon-goes-up" element={<BalloonGoesUpGame />} />
-                <Route path="/games/cricket" element={<CricketGame />} />
-                <Route path="/games/snake" element={<SnakeGame />} />
-                <Route path="/games/kho-kho" element={<KhoKhoGame />} />
-                                <Route path="/games/pong" element={<PongGame />} />
-                <Route path="/game/:gameId" element={<GameLoader />} />
+                <Route path="/" element={<Navigate to="/login" replace />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/leaderboard" element={<LeaderBoard />} />
-                <Route path="/tasks" element={<Tasks />} />
-                <Route path="/settings" element={<Settings />} />
+                
+                {/* Protected Routes */}
+                <Route path="/home" element={
+                  <ProtectedRoute>
+                    <Home />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games" element={
+                  <ProtectedRoute>
+                    <GameMode />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/2048" element={
+                  <ProtectedRoute>
+                    <Game2048 />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/candy-crush" element={
+                  <ProtectedRoute>
+                    <CandyCrushGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/flappy-bird" element={
+                  <ProtectedRoute>
+                    <FlappyBirdGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/memory-card" element={
+                  <ProtectedRoute>
+                    <MemoryCardGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/rock-paper-scissors" element={
+                  <ProtectedRoute>
+                    <RockPaperScissorsGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/stick-hero" element={
+                  <ProtectedRoute>
+                    <StickHeroGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/shape-breaker" element={
+                  <ProtectedRoute>
+                    <ShapeBreakerGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/archery" element={
+                  <ProtectedRoute>
+                    <ArcheryGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/sudoku" element={
+                  <ProtectedRoute>
+                    <SudokuGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/tic-tac-toe" element={
+                  <ProtectedRoute>
+                    <TicTacToeGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/bubble-shooter" element={
+                  <ProtectedRoute>
+                    <BubbleShooterGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/poll" element={
+                  <ProtectedRoute>
+                    <PollGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/wack-a-mole" element={
+                  <ProtectedRoute>
+                    <WackAMoleGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/wordle" element={
+                  <ProtectedRoute>
+                    <WordleGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/maze" element={
+                  <ProtectedRoute>
+                    <MazeGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/hangman" element={
+                  <ProtectedRoute>
+                    <HangmanGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/carrom" element={
+                  <ProtectedRoute>
+                    <CarromGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/troll-launch" element={
+                  <ProtectedRoute>
+                    <TrollLaunchGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/balloon-goes-up" element={
+                  <ProtectedRoute>
+                    <BalloonGoesUpGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/cricket" element={
+                  <ProtectedRoute>
+                    <CricketGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/snake" element={
+                  <ProtectedRoute>
+                    <SnakeGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/kho-kho" element={
+                  <ProtectedRoute>
+                    <KhoKhoGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/games/pong" element={
+                  <ProtectedRoute>
+                    <PongGame />
+                  </ProtectedRoute>
+                } />
+                <Route path="/game/:gameId" element={
+                  <ProtectedRoute>
+                    <GameLoader />
+                  </ProtectedRoute>
+                } />
+                <Route path="/leaderboard" element={
+                  <ProtectedRoute>
+                    <LeaderBoard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/tasks" element={
+                  <ProtectedRoute>
+                    <Tasks />
+                  </ProtectedRoute>
+                } />
+                <Route path="/settings" element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                } />
               </Routes>
             </MainLayout>
           </GameProvider>
