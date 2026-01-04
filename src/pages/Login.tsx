@@ -54,6 +54,18 @@ const Login = () => {
       handleRegister(e);
     }
   };
+   
+ const handleDemoLogin = (demoUsername: string) => {
+   // Attempt to login with the demo username
+   const loginSuccess = login(demoUsername);
+     
+   if (loginSuccess) {
+     // Navigate to home page after successful login
+     navigate('/');
+   } else {
+     setError('Demo account not found');
+   }
+ };
 
   return (
     <div className="ps5-container" style={{ 
@@ -76,11 +88,47 @@ const Login = () => {
         
         <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '8px' }}>
           <p style={{ color: 'var(--ps5-accent-blue)', marginBottom: '10px', fontWeight: 'bold' }}>Demo Accounts Available:</p>
-          <ul style={{ textAlign: 'left', color: 'white', paddingLeft: '20px' }}>
-            <li>KRISHNA PATIL RAJPUT</li>
-            <li>Om Khapote</li>
-            <li>Gunjan Pande</li>
-          </ul>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '10px' }}>
+            <button 
+              onClick={() => handleDemoLogin('KRISHNA PATIL RAJPUT')}
+              className="ps5-button"
+              style={{ 
+                width: '100%', 
+                padding: '10px',
+                fontSize: '14px',
+                backgroundColor: 'rgba(0, 150, 255, 0.3)',
+                border: '1px solid var(--ps5-accent-blue)'
+              }}
+            >
+              KRISHNA PATIL RAJPUT
+            </button>
+            <button 
+              onClick={() => handleDemoLogin('Om Khapote')}
+              className="ps5-button"
+              style={{ 
+                width: '100%', 
+                padding: '10px',
+                fontSize: '14px',
+                backgroundColor: 'rgba(0, 150, 255, 0.3)',
+                border: '1px solid var(--ps5-accent-blue)'
+              }}
+            >
+              Om Khapote
+            </button>
+            <button 
+              onClick={() => handleDemoLogin('Gunjan Pande')}
+              className="ps5-button"
+              style={{ 
+                width: '100%', 
+                padding: '10px',
+                fontSize: '14px',
+                backgroundColor: 'rgba(0, 150, 255, 0.3)',
+                border: '1px solid var(--ps5-accent-blue)'
+              }}
+            >
+              Gunjan Pande
+            </button>
+          </div>
           <p style={{ color: 'white', marginTop: '10px', fontSize: '14px' }}>Or create your own username to join!</p>
         </div>
         
