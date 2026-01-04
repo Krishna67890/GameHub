@@ -20,15 +20,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // Check if user exists in localStorage on app start
-    const storedUser = localStorage.getItem('demoUser');
-    if (storedUser) {
-      const userData = JSON.parse(storedUser);
-      setUser(userData);
-      setIsAuthenticated(true);
-    }
-    
-    // Initialize default demo accounts if none exist
+    // Initialize default demo accounts first
     const storedDemoAccounts = localStorage.getItem('demoAccounts');
     if (!storedDemoAccounts) {
       // Add default demo accounts
@@ -38,6 +30,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         { username: 'Gunjan Pande', joinDate: new Date().toISOString() },
       ];
       localStorage.setItem('demoAccounts', JSON.stringify(defaultDemoAccounts));
+    } else {
+      // Ensure default demo accounts exist even if some are missing
+      const existingDemoAccounts = JSON.parse(storedDemoAccounts);
+      const defaultDemoAccounts = [
+        { username: 'KRISHNA PATIL RAJPUT', joinDate: new Date().toISOString() },
+        { username: 'Om Khapote', joinDate: new Date().toISOString() },
+        { username: 'Gunjan Pande', joinDate: new Date().toISOString() },
+      ];
+      
+      let hasUpdates = false;
+      const updatedAccounts = [...existingDemoAccounts];
+      
+      defaultDemoAccounts.forEach(defaultAccount => {
+        const exists = existingDemoAccounts.some((account: User) => account.username === defaultAccount.username);
+        if (!exists) {
+          updatedAccounts.push(defaultAccount);
+          hasUpdates = true;
+        }
+      });
+      
+      if (hasUpdates) {
+        localStorage.setItem('demoAccounts', JSON.stringify(updatedAccounts));
+      }
+    }
+    
+    // Check if user exists in localStorage on app start
+    const storedUser = localStorage.getItem('demoUser');
+    if (storedUser) {
+      const userData = JSON.parse(storedUser);
+      setUser(userData);
+      setIsAuthenticated(true);
     }
     
     // Clean up old password storage if it exists
