@@ -38,7 +38,7 @@ const Login = () => {
     register(username.trim());
     
     // Navigate to home page after registration
-    navigate('/');
+    navigate('/home');
   };
   
   const handleLogin = (e: React.FormEvent) => {
@@ -55,7 +55,7 @@ const Login = () => {
     
     if (loginSuccess) {
       // Navigate to home page after successful login
-      navigate('/');
+      navigate('/home');
     } else {
       setError('User not found');
     }
@@ -78,7 +78,7 @@ const Login = () => {
    if (loginSuccess) {
      console.log(`Login successful for: ${demoUsername}`);
      // Navigate to home page after successful login
-     navigate('/');
+     navigate('/home');
    } else {
      console.log(`Login failed for: ${demoUsername}`);
      setError('Demo account not found');
