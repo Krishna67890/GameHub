@@ -71,8 +71,18 @@ const Login = () => {
       }}>
         <h2 style={{ color: 'var(--ps5-accent-blue)', marginBottom: '20px' }}>🎮 Demo Login</h2>
         <p style={{ color: 'white', marginBottom: '20px' }}>
-          Create your demo account with username
+          Login with your username or create a new demo account
         </p>
+        
+        <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '8px' }}>
+          <p style={{ color: 'var(--ps5-accent-blue)', marginBottom: '10px', fontWeight: 'bold' }}>Demo Accounts Available:</p>
+          <ul style={{ textAlign: 'left', color: 'white', paddingLeft: '20px' }}>
+            <li>KRISHNA PATIL RAJPUT</li>
+            <li>Om Khapote</li>
+            <li>Gunjan Pande</li>
+          </ul>
+          <p style={{ color: 'white', marginTop: '10px', fontSize: '14px' }}>Or create your own username to join!</p>
+        </div>
         
         {error && (
           <div style={{ 

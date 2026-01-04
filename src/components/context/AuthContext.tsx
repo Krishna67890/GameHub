@@ -28,6 +28,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(true);
     }
     
+    // Initialize default demo accounts if none exist
+    const storedDemoAccounts = localStorage.getItem('demoAccounts');
+    if (!storedDemoAccounts) {
+      // Add default demo accounts
+      const defaultDemoAccounts = [
+        { username: 'KRISHNA PATIL RAJPUT', joinDate: new Date().toISOString() },
+        { username: 'Om Khapote', joinDate: new Date().toISOString() },
+        { username: 'Gunjan Pande', joinDate: new Date().toISOString() },
+      ];
+      localStorage.setItem('demoAccounts', JSON.stringify(defaultDemoAccounts));
+    }
+    
     // Clean up old password storage if it exists
     localStorage.removeItem('demoPassword');
   }, []);
@@ -39,13 +51,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
     
     localStorage.setItem('demoUser', JSON.stringify(userData));
+    
+    // Add to demo accounts list
+    const storedDemoAccounts = localStorage.getItem('demoAccounts');
+    let demoAccounts = [];
+    if (storedDemoAccounts) {
+      demoAccounts = JSON.parse(storedDemoAccounts);
+    }
+    
+    // Check if user already exists in the list
+    const existingUserIndex = demoAccounts.findIndex((account: User) => account.username === username);
+    if (existingUserIndex === -1) {
+      demoAccounts.push(userData);
+      localStorage.setItem('demoAccounts', JSON.stringify(demoAccounts));
+    }
+    
     setUser(userData);
     setIsAuthenticated(true);
   };
 
   const login = (username: string): boolean => {
+    // First check if it's the currently logged in user
     const storedUser = localStorage.getItem('demoUser');
-    
     if (storedUser) {
       const userData = JSON.parse(storedUser);
       if (userData.username === username) {
@@ -54,6 +81,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return true;
       }
     }
+    
+    // Check in demo accounts list
+    const storedDemoAccounts = localStorage.getItem('demoAccounts');
+    if (storedDemoAccounts) {
+      const demoAccounts = JSON.parse(storedDemoAccounts);
+      const foundUser = demoAccounts.find((account: User) => account.username === username);
+      if (foundUser) {
+        // Set this user as the current user
+        localStorage.setItem('demoUser', JSON.stringify(foundUser));
+        setUser(foundUser);
+        setIsAuthenticated(true);
+        return true;
+      }
+    }
+    
     return false;
   };
 
@@ -62,6 +104,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsAuthenticated(false);
     // Optionally clear stored credentials
     localStorage.removeItem('demoPassword'); // Remove the stored password since we no longer use it
+    
+    // Keep demo accounts list but clear current user
   };
 
   return (

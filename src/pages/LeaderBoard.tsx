@@ -5,77 +5,84 @@ import '../styles/ps5-theme.css';
 const LeaderBoard = () => {
   const { user } = useAuth();
   
-  // Initialize with example players
-  const [leaderboardData, setLeaderboardData] = useState([
-    { id: 1, name: 'Krishna Patil Rajput', score: 98765, game: '2048' },
-    { id: 2, name: 'Atharva Patil Rajput', score: 87654, game: 'Snake' },
-    { id: 3, name: 'Ankush Khakale', score: 76543, game: 'Tic Tac Toe' },
-    { id: 4, name: 'Youraj Khandare', score: 65432, game: 'Flappy Bird' },
-    { id: 5, name: 'Player1', score: 54321, game: 'Memory Card' },
-    { id: 6, name: 'ProGamer', score: 45678, game: 'Archery' },
-    { id: 7, name: 'GameMaster', score: 34567, game: 'Bubble Shooter' },
-    { id: 8, name: 'Champion', score: 23456, game: 'Sudoku' },
-    { id: 9, name: 'Winner', score: 12345, game: 'Troll Launch' },
-  ]);
+  interface LeaderboardEntry {
+    id: number | string;
+    name: string;
+    score: number;
+    game: string;
+  }
+  
+  // Initialize with empty array, will be populated from localStorage or demo accounts
+  const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
 
   useEffect(() => {
     // Load leaderboard data from localStorage if available
     const savedLeaderboard = localStorage.getItem('leaderboardData');
+    
+    // Also load demo accounts to show registered users
+    const storedDemoAccounts = localStorage.getItem('demoAccounts');
+    
+    let allData: LeaderboardEntry[] = [];
+    
+    // Load existing leaderboard data if available
     if (savedLeaderboard) {
       try {
         const parsedData = JSON.parse(savedLeaderboard);
-        // If user is logged in, add their score to the leaderboard
-        if (user && user.username) {
-          // Check if user already exists in leaderboard
-          const userExists = parsedData.some((player: any) => player.name === user.username);
-          if (!userExists) {
-            // Add a default score for the user if they're not already on the leaderboard
-            const userScore = { 
-              id: Date.now(), 
-              name: user.username, 
-              score: Math.floor(Math.random() * 5000) + 1000, // Random score between 1000-6000 for demo
-              game: 'Demo Account' 
-            };
-            const updatedData = [...parsedData, userScore];
-            
-            // Sort by score descending
-            updatedData.sort((a, b) => b.score - a.score);
-            
-            // Limit to top 20
-            const top20 = updatedData.slice(0, 20);
-            
-            setLeaderboardData(top20);
-            localStorage.setItem('leaderboardData', JSON.stringify(top20));
-          } else {
-            setLeaderboardData(parsedData);
-          }
-        } else {
-          setLeaderboardData(parsedData);
-        }
+        allData = [...parsedData];
       } catch (error) {
         console.error('Error parsing leaderboard data:', error);
       }
-    } else {
-      // If no saved leaderboard, add the current user if logged in
-      if (user && user.username) {
+    }
+    
+    // Add demo accounts that don't have scores yet
+    if (storedDemoAccounts) {
+      try {
+        const demoAccounts = JSON.parse(storedDemoAccounts);
+        
+        // Add demo accounts that are not already in the leaderboard
+        demoAccounts.forEach((account: { username: string }) => {
+          const exists = allData.some(player => player.name === account.username);
+          if (!exists) {
+            // Add a default score for demo accounts without scores
+            const demoScore = { 
+              id: Date.now() + Math.random(), // Unique ID
+              name: account.username, 
+              score: Math.floor(Math.random() * 1000) + 100, // Random score between 100-1100 for demo
+              game: 'Demo Account' 
+            };
+            allData.push(demoScore);
+          }
+        });
+      } catch (error) {
+        console.error('Error parsing demo accounts:', error);
+      }
+    }
+    
+    // If user is logged in and not in the data, add them
+    if (user && user.username) {
+      const userExists = allData.some(player => player.name === user.username);
+      if (!userExists) {
         const userScore = { 
           id: Date.now(), 
           name: user.username, 
           score: Math.floor(Math.random() * 5000) + 1000, // Random score between 1000-6000 for demo
           game: 'Demo Account' 
         };
-        const updatedData = [...leaderboardData, userScore];
-        
-        // Sort by score descending
-        updatedData.sort((a, b) => b.score - a.score);
-        
-        // Limit to top 20
-        const top20 = updatedData.slice(0, 20);
-        
-        setLeaderboardData(top20);
-        localStorage.setItem('leaderboardData', JSON.stringify(top20));
+        allData.push(userScore);
       }
     }
+    
+    // Sort by score descending
+    allData.sort((a, b) => b.score - a.score);
+    
+    // Limit to top 20
+    const top20 = allData.slice(0, 20);
+    
+    setLeaderboardData(top20);
+    
+    // Save back to localStorage
+    localStorage.setItem('leaderboardData', JSON.stringify(top20));
+    
   }, [user]);
 
   const refreshLeaderboard = () => {
