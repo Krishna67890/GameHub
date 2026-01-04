@@ -19,7 +19,11 @@ app.use(express.static(path.join(__dirname, 'dist')));
 
 // Handle all other routes by serving index.html
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'), (err) => {
+    if (err) {
+      res.status(500).send(err.message);
+    }
+  });
 });
 
 const PORT = process.env.PORT || 3000;

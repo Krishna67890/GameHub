@@ -9,6 +9,21 @@ const Login = () => {
   const [isLoginMode, setIsLoginMode] = useState(true); // true for login, false for register
   const { login, register } = useAuth();
   const navigate = useNavigate();
+  
+  // Initialize demo accounts on component mount
+  React.useEffect(() => {
+    // This ensures demo accounts exist when the login page loads
+    const storedDemoAccounts = localStorage.getItem('demoAccounts');
+    if (!storedDemoAccounts) {
+      // Create default demo accounts if they don't exist
+      const defaultDemoAccounts = [
+        { username: 'KRISHNA PATIL RAJPUT', joinDate: new Date().toISOString() },
+        { username: 'Om Khapote', joinDate: new Date().toISOString() },
+        { username: 'Gunjan Pande', joinDate: new Date().toISOString() },
+      ];
+      localStorage.setItem('demoAccounts', JSON.stringify(defaultDemoAccounts));
+    }
+  }, []);
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
