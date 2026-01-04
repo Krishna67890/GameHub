@@ -72,13 +72,28 @@ const Login = () => {
    
  const handleDemoLogin = (demoUsername: string) => {
    // Attempt to login with the demo username
+   console.log(`Attempting to login with demo user: ${demoUsername}`);
    const loginSuccess = login(demoUsername);
      
    if (loginSuccess) {
+     console.log(`Login successful for: ${demoUsername}`);
      // Navigate to home page after successful login
      navigate('/');
    } else {
+     console.log(`Login failed for: ${demoUsername}`);
      setError('Demo account not found');
+       
+     // Ensure demo accounts exist in localStorage
+     const storedDemoAccounts = localStorage.getItem('demoAccounts');
+     if (!storedDemoAccounts) {
+       const defaultDemoAccounts = [
+         { username: 'KRISHNA PATIL RAJPUT', joinDate: new Date().toISOString() },
+         { username: 'Om Khapote', joinDate: new Date().toISOString() },
+         { username: 'Gunjan Pande', joinDate: new Date().toISOString() },
+       ];
+       localStorage.setItem('demoAccounts', JSON.stringify(defaultDemoAccounts));
+       console.log('Demo accounts reinitialized');
+     }
    }
  };
 
